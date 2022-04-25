@@ -1,0 +1,8 @@
+span.me-3.rounded-circle.avatar-sm.p-2.bg-light {
+    font-size: 22px;
+    text-align: center;
+}
+.required:after {
+    content:"*";
+    color: #e5343d;
+}
