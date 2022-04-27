@@ -71,8 +71,9 @@
         e.stopImmediatePropagation();
         e.preventDefault();
         var page_module = $(this).data('module');
+        page_module = page_module.replace('-', ' ');
         Swal.fire({
-            html: '<div class="mt-3"><lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon><div class="mt-4 pt-2 fs-15 mx-5"><h4>Are you Sure ?</h4><p class="text-muted mx-4 mb-0">Are you Sure You want to Delete this ' + page_module + ' ?</p></div></div>',
+            html: '<div class="mt-3"><lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon><div class="mt-4 pt-2 fs-15 mx-5"><h4>Are you Sure ?</h4><p class="text-muted mx-4 mb-0">Are you Sure You want to Delete this "' + page_module + '" ?</p></div></div>',
             showCancelButton: !0,
             confirmButtonClass: "btn btn-primary w-xs me-2 mb-1",
             confirmButtonText: "Yes, Delete It!",
@@ -96,7 +97,7 @@
                             var response = res;
                             Swal.fire(
                                 'Deleted!',
-                                'Your ' + page_module + ' has been deleted.',
+                                'Your "' + page_module + '" has been deleted.',
                                 'success'
                             ).then((res) => {
                                 console.log("here", response);
@@ -111,7 +112,7 @@
             } else {
                 Swal.fire(
                     'Cancelled',
-                    'Your ' + page_module + ' is safe :)',
+                    'Your "' + page_module + '" is safe :)',
                     'error'
                 )
             }
@@ -122,9 +123,10 @@
         e.stopImmediatePropagation();
         e.preventDefault();
         var page_module = $(this).data('module');
+        page_module = page_module.replace('-', ' ');
         Swal.fire({
             title: 'Are you Sure ?',
-            text: 'Are you Sure You want to change this ' + page_module + ' status ?',
+            text: 'Are you Sure You want to change this "' + page_module + '" status ?',
             icon: 'question',
             showCancelButton: !0,
             confirmButtonClass: "btn btn-primary w-xs me-2 mb-1",
@@ -151,7 +153,7 @@
                         if (res.status) {
                             Swal.fire(
                                 'Status Changed!',
-                                'Your ' + page_module + ' status has been updated.',
+                                'Your "' + page_module + '" status has been updated.',
                                 'success'
                             ).then((res) => {
                                 console.log("here", response);
@@ -166,7 +168,7 @@
             } else {
                 Swal.fire(
                     'Cancelled',
-                    'Your ' + page_module + ' is safe :)',
+                    'Your "' + page_module + '" is safe :)',
                     'error'
                 )
             }

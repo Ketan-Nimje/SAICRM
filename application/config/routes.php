@@ -65,20 +65,26 @@ $route['dashboard'] = 'Dashboard/index';
 $route['change-password'] = 'Dashboard/changePassword';
 
 // follow up routes: Manage Inquiries
-$folder = 'manage-inquires/';
+$folder = 'configuration/';
 
 $route["{$folder}contact"] = "{$folder}Contact/index";
 
-$route["{$folder}download-setup"] = "{$folder}DownloadSetup/index";
-$route["{$folder}download-setup/get_data"] = "{$folder}DownloadSetup/get_data";
-$route["{$folder}download-setup/add_update"] = "{$folder}DownloadSetup/add_update";
-$route["{$folder}download-setup/edit/(:num)"] = "{$folder}DownloadSetup/edit/$1";
-$route["{$folder}download-setup/show/(:num)"] = "{$folder}DownloadSetup/show/$1";
-$route["{$folder}download-setup/delete"] = "{$folder}DownloadSetup/delete";
-$route["{$folder}download-setup/change_status"] = "{$folder}DownloadSetup/change_status";
+$route["{$folder}for-year"] = "{$folder}ForYear/index";
+$route["{$folder}for-year/get_data"] = "{$folder}ForYear/get_data";
+$route["{$folder}for-year/add_update"] = "{$folder}ForYear/add_update";
+$route["{$folder}for-year/edit/(:num)"] = "{$folder}ForYear/edit/$1";
+$route["{$folder}for-year/show/(:num)"] = "{$folder}ForYear/show/$1";
+$route["{$folder}for-year/delete"] = "{$folder}ForYear/delete";
+$route["{$folder}for-year/change_status"] = "{$folder}ForYear/change_status";
 
-$route["{$folder}gst"] = "{$folder}Gst/index";
-$route["{$folder}job"] = "{$folder}Job/index";
+$route["{$folder}gst-key"] = "{$folder}GstKey/index";
+$route["{$folder}gst-key/get_data"] = "{$folder}GstKey/get_data";
+$route["{$folder}gst-key/add_update"] = "{$folder}GstKey/add_update";
+$route["{$folder}gst-key/edit/(:num)"] = "{$folder}GstKey/edit/$1";
+$route["{$folder}gst-key/show/(:num)"] = "{$folder}GstKey/show/$1";
+$route["{$folder}gst-key/delete"] = "{$folder}GstKey/delete";
+$route["{$folder}gst-key/change_status"] = "{$folder}GstKey/change_status";
+$route["{$folder}state"] = "{$folder}State/index";
 $route["{$folder}product"] = "{$folder}Product/index";
 
 $route["{$folder}product-download"] = "{$folder}ProductDownload/index";

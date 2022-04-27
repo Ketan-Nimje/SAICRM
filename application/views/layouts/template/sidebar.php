@@ -244,6 +244,29 @@
                     </a>
                 </li>
 
+                <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-user-or-team">Configuration</span></li>
+
+                <li class="nav-item">
+                    <a class="nav-link menu-link <?= in_array($_controller_path ?? "", [base_url() . 'configuration/product/']) ? 'active' : '' ?>" href="<?= base_url() ?>configuration/product">
+                        <i class="ri-product-hunt-line"></i> <span data-key="t-product">Product</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link <?= in_array($_controller_path ?? "", [base_url() . 'configuration/gst-key/']) ? 'active' : '' ?>" href="<?= base_url() ?>configuration/gst-key">
+                        <i class="ri-google-line"></i> <span data-key="t-gst-key">GST Key</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link <?= in_array($_controller_path ?? "", [base_url() . 'configuration/for-year/']) ? 'active' : '' ?>" href="<?= base_url() ?>configuration/for-year">
+                        <i class="ri-xing-line"></i> <span data-key="t-for-year">For Year</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link <?= in_array($_controller_path ?? "", [base_url() . 'configuration/state/']) ? 'active' : '' ?>" href="<?= base_url() ?>configuration/state">
+                        <i class="ri-skype-line"></i> <span data-key="t-state">State</span>
+                    </a>
+                </li>
+
             </ul>
         </div>
         <!-- Sidebar -->
