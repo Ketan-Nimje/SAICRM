@@ -87,13 +87,9 @@ $route["{$folder}gst-key/change_status"] = "{$folder}GstKey/change_status";
 $route["{$folder}state"] = "{$folder}State/index";
 $route["{$folder}product"] = "{$folder}Product/index";
 
-$route["{$folder}product-download"] = "{$folder}ProductDownload/index";
-$route["{$folder}product-download/get_data"] = "{$folder}ProductDownload/get_data";
-$route["{$folder}product-download/add_update"] = "{$folder}ProductDownload/add_update";
-$route["{$folder}product-download/edit/(:num)"] = "{$folder}ProductDownload/edit/$1";
-$route["{$folder}product-download/show/(:num)"] = "{$folder}ProductDownload/show/$1";
-$route["{$folder}product-download/delete"] = "{$folder}ProductDownload/delete";
-$route["{$folder}product-download/change_status"] = "{$folder}ProductDownload/change_status";
+$folder = 'help-desk';
+
+$route["{$folder}help"] = "{$folder}Help/index";
 
 $route["{$folder}quick"] = "{$folder}Quick/index";
 $route["{$folder}transaction"] = "{$folder}Transaction/index";

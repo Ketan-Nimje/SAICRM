@@ -267,6 +267,14 @@
                     </a>
                 </li>
 
+                <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-user-or-team">HelpDesk</span></li>
+
+                <li class="nav-item">
+                    <a class="nav-link menu-link <?= in_array($_controller_path ?? "", [base_url() . 'help-desk/help/']) ? 'active' : '' ?>" href="<?= base_url() ?>help-desk/help">
+                        <i class="ri-heading"></i> <span data-key="t-help-desk">Help</span>
+                    </a>
+                </li>
+
             </ul>
         </div>
         <!-- Sidebar -->
