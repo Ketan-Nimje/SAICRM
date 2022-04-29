@@ -189,8 +189,22 @@ $route["{$folder}term"] = "{$folder}Term/index";
 // follow up routes: Manage Account & Priviliges
 $folder = 'manage-account-priviliges/';
 
-$route["{$folder}account"] = "{$folder}Account/index";
-$route["{$folder}privilige"] = "{$folder}Privilige/index";
+$route["{$folder}user"] = "{$folder}User/index";
+$route["{$folder}user-priviliges"] = "{$folder}UserPrivilige/index";
+$route["{$folder}user-priviliges/get_data"] = "{$folder}UserPrivilige/get_data";
+$route["{$folder}user-priviliges/add_update"] = "{$folder}UserPrivilige/add_update";
+$route["{$folder}user-priviliges/edit/(:num)"] = "{$folder}UserPrivilige/edit/$1";
+$route["{$folder}user-priviliges/show"] = "{$folder}UserPrivilige/show";
+$route["{$folder}user-priviliges/delete"] = "{$folder}UserPrivilige/delete";
+$route["{$folder}user-priviliges/change_status"] = "{$folder}UserPrivilige/change_status";
+
+$route["{$folder}menu-assign"] = "{$folder}MenuAssign/index";
+$route["{$folder}menu-assign/get_data"] = "{$folder}MenuAssign/get_data";
+$route["{$folder}menu-assign/add_update"] = "{$folder}MenuAssign/add_update";
+$route["{$folder}menu-assign/edit/(:num)"] = "{$folder}MenuAssign/edit/$1";
+$route["{$folder}menu-assign/show"] = "{$folder}MenuAssign/show";
+$route["{$folder}menu-assign/delete"] = "{$folder}MenuAssign/delete";
+$route["{$folder}menu-assign/change_status"] = "{$folder}MenuAssign/change_status";
 
 // follow up routes: Manage Teams
 $folder = 'manage-teams/';

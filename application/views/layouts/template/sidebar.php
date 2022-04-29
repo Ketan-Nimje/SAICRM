@@ -215,32 +215,21 @@
                     </div>
                 </li>
 
-                <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-user-or-team">User/Team</span></li>
-
-                <li class="nav-item d-none">
-                    <a class="nav-link menu-link" href="#sidebar1" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebar1">
-                        <i class="ri-user-settings-line"></i> <span data-key="t-sidebar1">Manage Account & Priviliges</span>
-                    </a>
-                    <div class="collapse menu-dropdown" id="sidebar1">
-                        <ul class="nav nav-sm flex-column">
-                            <li class="nav-item">
-                                <a href="<?= base_url() ?>manage-account-priviliges/account" class="nav-link" data-key="t-accounts"> Accounts </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="<?= base_url() ?>manage-account-priviliges/privilige" class="nav-link" data-key="t-priviliges"> Priviliges </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
+                <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-user-or-team">Manage Account & Priviliges</span></li>
 
                 <li class="nav-item">
-                    <a class="nav-link menu-link <?= in_array($_controller_path ?? "", [base_url() . 'manage-account-priviliges/account/']) ? 'active' : '' ?>" href="<?= base_url() ?>manage-account-priviliges/account">
-                        <i class="ri-user-settings-line"></i> <span data-key="t-accounts">Accounts</span>
+                    <a class="nav-link menu-link <?= in_array($_controller_path ?? "", [base_url() . 'manage-account-priviliges/user/']) ? 'active' : '' ?>" href="<?= base_url() ?>manage-account-priviliges/user">
+                        <i class="ri-user-line"></i> <span data-key="t-user">Users</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link <?= in_array($_controller_path ?? "", [base_url() . 'manage-teams/team/']) ? 'active' : '' ?>" href="<?= base_url() ?>manage-teams/team">
-                        <i class="ri-team-line"></i> <span data-key="t-teams">Teams</span>
+                    <a class="nav-link menu-link <?= in_array($_controller_path ?? "", [base_url() . 'manage-account-priviliges/user-priviliges/']) ? 'active' : '' ?>" href="<?= base_url() ?>manage-account-priviliges/user-priviliges">
+                        <i class="ri-user-settings-line"></i> <span data-key="t-user-priviliges">User Priviliges</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link <?= in_array($_controller_path ?? "", [base_url() . 'manage-account-priviliges/menu-assign/']) ? 'active' : '' ?>" href="<?= base_url() ?>manage-account-priviliges/menu-assign">
+                        <i class="ri-menu-add-line"></i> <span data-key="t-menu-assign">Menu Assign</span>
                     </a>
                 </li>
 
