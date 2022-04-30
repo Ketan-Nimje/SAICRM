@@ -125,6 +125,9 @@ $(document).on('click', '.edit-row', function (e) {
                     } else if (ele.type == 'file') {
                         $("#"+ele.name+"-field").val('');
                         $("#"+ele.name+"-preview").attr('src', res.data[ele.name]);
+                    } else if (ele.type == 'multi-select') {
+                        var op_arr = res.data[ele.name].split(',');
+                        $('select[name="' + ele.name + '[]"]').val(op_arr);
                     } else {
                         $(ele.type + '[name=' + ele.name + ']').val(res.data[ele.name]);
                     }

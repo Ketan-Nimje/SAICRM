@@ -32,7 +32,7 @@ class UserPrivilige extends CI_Controller
     {
         $this->view_data['_breadcrumb_heading'] = ucwords(str_replace('-', ' ', $this->uri->segment(1)));
         $this->view_data['_view_title'] = ucwords(str_replace('-', ' ', $this->uri->segment(2)));
-        $this->view_data['users'] = $this->ex->query("select si_admin_id,name from si_admin where status='A'");
+        $this->view_data['users'] = $this->ex->query("select si_admin_id,name,username from si_admin where status='A'");
         $this->view_data['menus'] = $this->ex->query("select si_menu_id,parent_id,menu_name from si_menu where status='A'");
         
         $this->load->view($this->module_folder . '/' . $this->module, $this->view_data);
@@ -53,19 +53,25 @@ class UserPrivilige extends CI_Controller
             3 => 'timestamp'
         );
 
-        $sql = "select si_menu_assign_id,username,name,phone,role,otp,create_date,update_date,status from si_menu_assign where status IN ('A', 'D')";
-        $sql = "SELECT 
-        ad.username, 
-        GROUP_CONCAT(me.menu_name SEPARATOR ',') as menu_name,
-        ms.client_form,
-        ms.contact_form,
-        ms.product_form,
-        ms.si_menu_assign_id
-        FROM si_menu_assign  ms,
-        JOIN si_admin ad ON (ms.si_admin_id = ad.si_admin_id) 
-        JOIN si_menu me ON FIND_IN_SET(me.si_menu_id, ms.si_menu_id) != -1
-        WHERE ms.status IN ('A', 'D') AND ad.status = 'A' AND ad.si_admin_id != " . $this->session->userdata('si_admin_id') . " 
-        GROUP BY ad.username";
+        $sql = "SELECT si_menu_assign_id,
+        ms.si_admin_id,
+        ad.name,
+        ad.username,
+        GROUP_CONCAT( DISTINCT m1.menu_name SEPARATOR ', ') client_form_menu,
+        GROUP_CONCAT(DISTINCT m2.menu_name SEPARATOR ', ') contact_form_menu,
+        GROUP_CONCAT(DISTINCT m3.menu_name SEPARATOR ', ') product_form_menu,
+        ms.status,
+        ms.create_date
+        FROM si_admin ad
+        JOIN si_menu_assign ms ON (ms.si_admin_id = ad.si_admin_id) 
+        JOIN si_menu m1 ON FIND_IN_SET(m1.si_menu_id, ms.client_form) > 0
+        JOIN si_menu m2 ON FIND_IN_SET(m2.si_menu_id, ms.contact_form) > 0
+        JOIN si_menu m3 ON FIND_IN_SET(m3.si_menu_id, ms.product_form) > 0
+        WHERE ms.status IN ('A','D') AND ad.status = 'A' AND ad.si_admin_id != " . $this->session->userdata('id');
+
+        if (empty(trim($requestData['search']['value']))) {
+            $sql .= ' GROUP BY ad.username';
+        }
         $query = $this->ex->query($sql);
 
         $totalData = count($query);
@@ -74,7 +80,8 @@ class UserPrivilige extends CI_Controller
         if (!empty(trim($requestData['search']['value']))) {   // if there is a search parameter, $requestData['search']['value'] contains search parameter
             $searchString = "'%" . str_replace(",", "','", trim($requestData['search']['value'])) . "%'"; //wrapping qoutation
             $sql .= " and ( ad.username  LIKE " . $searchString;
-            $sql .= " or me.menu_name  LIKE " . $searchString . ")";
+            $sql .= " or ad.name  LIKE " . $searchString . ")";
+            $sql .= ' GROUP BY ad.username';
         }
         $query = $this->ex->query($sql);
 
@@ -88,35 +95,47 @@ class UserPrivilige extends CI_Controller
 
         $cnts = $requestData['start'] + 1;
         foreach ($query as $row) {
-
-            if ($row['status'] == 'A') {
-                $stts = 'D';
-                $icon = 'btn-outline-success ri-eye-line';
-            } else {
-                $stts = 'A';
-                $icon = 'btn-outline-warning ri-eye-off-line';
-            }
-
             $action = '';
-            if ($row['role'] == 'A' || $row['role'] == 'TL') {
-                $action .= "<a class='change-status m-1' data-url='" . $this->view_data['_controller_path'] . "change_status' data-id='" . $row["si_menu_assign_id"] . "' data-module='" . $this->module . "' data-status='" . $stts . "'><i class='btn btn-sm btn-rounded " . $icon . "' aria-hidden='true'></i></a>";
+
+            $action .= "<a data-modal='showModal' data-url='" . $this->view_data['_controller_path'] . "edit/" . $row["si_menu_assign_id"] . "' class='edit-row me-1'><i class='btn btn-sm btn-rounded btn-outline-info ri-edit-line'></i></a><a data-url='" . $this->view_data['_controller_path'] . "delete' data-id='" . $row["si_menu_assign_id"] . "' data-module='" . $this->module . "' class='delete-row'><i class='btn btn-outline-danger btn-sm btn-rounded ri-delete-bin-line'></i></a>";
+
+            $menu = '';
+
+            if ($row['client_form_menu'] != '') {
+                $menu .= '<div class="card ribbon-box border-bottom shadow-none mb-lg-0" style="background:none;">
+                            <div class="card-body">
+                                <div class="ribbon ribbon-primary round-shape">Client Form</div>
+                                <div class="ribbon-content mt-4 text-muted">
+                                    <p class="mb-0">'. $row['client_form_menu'] .'</p>
+                                </div>
+                            </div>
+                        </div>';
             }
-
-            $action .= "<a data-modal='showModal' data-url='" . $this->view_data['_controller_path'] . "edit/" . $row["si_menu_assign_id"] . "' class='edit-row me-1'><i class='btn btn-sm btn-rounded btn-outline-info ri-edit-line'></i></a>";
-
-            if ($row['role'] == 'A' || $row['role'] == 'TL') {
-                $action .= "<a data-url='" . $this->view_data['_controller_path'] . "delete' data-id='" . $row["si_menu_assign_id"] . "' data-module='" . $this->module . "' class='delete-row'><i class='btn btn-outline-danger btn-sm btn-rounded ri-delete-bin-line'></i></a>";
+            if ($row['contact_form_menu'] != '') {
+                $menu .= '<div class="card ribbon-box border-bottom shadow-none mb-lg-0" style="background:none;">
+                            <div class="card-body">
+                                <div class="ribbon ribbon-info round-shape">Contact Form</div>
+                                <div class="ribbon-content mt-4 text-muted">
+                                    <p class="mb-0">'. $row['contact_form_menu'] .'</p>
+                                </div>
+                            </div>
+                        </div>';
+            }
+            if ($row['product_form_menu'] != '') {
+                $menu .= '<div class="card ribbon-box shadow-none mb-lg-0" style="background:none;">
+                            <div class="card-body">
+                                <div class="ribbon ribbon-secondary round-shape">Product Form</div>
+                                <div class="ribbon-content mt-4 text-muted">
+                                    <p class="mb-0">'. $row['product_form_menu'] .'</p>
+                                </div>
+                            </div>
+                        </div>';
             }
 
             $nestedData = array();
             $nestedData[] = $cnts++;
-            $nestedData[] = $row["name"];
-            $nestedData[] = $row["username"];
-            $nestedData[] = $row["phone"];
-            $nestedData[] = $this->view_data['roles'][$row["role"]];
-            $nestedData[] = $row["otp"];
-            $nestedData[] = display_datetime($row["create_date"]);
-            $nestedData[] = display_datetime($row["update_date"]);
+            $nestedData[] = $row['name'] . '<br />('. strtolower($row["username"]) .')';
+            $nestedData[] = $menu;
             $nestedData[] = $action;
             $nestedData['DT_RowId'] = "r" . $row['si_menu_assign_id'];
             $data[] = $nestedData;
@@ -151,16 +170,15 @@ class UserPrivilige extends CI_Controller
         $action = ($id > 0) ? 'updated' : 'added';
         $_view_title = ucwords(str_replace('-', ' ', $this->uri->segment(2)));
 
-        $this->form_validation->set_rules('name', 'Name', 'trim|required');
         if ($action == 'added') {
-            $is_unique =  '|is_unique[si_menu_assign.name]';
+            $is_unique =  '|is_unique[si_menu_assign.si_admin_id]';
         } else {
             $is_unique =  '';
         }
-        $this->form_validation->set_rules('username', 'Username', 'trim|required' . $is_unique);
-        $this->form_validation->set_rules('phone', 'Phone', 'trim|required|min_length[10]|max_length[15]');
-        $this->form_validation->set_rules('password', 'Password', 'trim|required|min_length[3]|max_length[20]');
-        $this->form_validation->set_rules('role', 'Role', 'trim|required');
+        $this->form_validation->set_rules('user', 'User', 'trim|required'. $is_unique);
+        $this->form_validation->set_rules('client_form[]', 'Client Form', 'trim|required');
+        $this->form_validation->set_rules('contact_form[]', 'Contact Form', 'trim|required');
+        $this->form_validation->set_rules('product_form[]', 'Product Form', 'trim|required');
 
         if (!$this->form_validation->run()) {
             $response['message'] = validation_errors(' ', ' ');
@@ -168,13 +186,31 @@ class UserPrivilige extends CI_Controller
             exit;
         }
 
+        $menu_id = '';
+        $client = '';
+        $contact = '';
+        $product = '';
+        if (count($_POST['client_form']) > 0) {
+            $menu_id .= implode(",", $_POST['client_form']);
+            $client = implode(",", $_POST['client_form']);
+        }
+        if (count($_POST['contact_form']) > 0) {
+            $menu_id .= "," . implode(",", $_POST['contact_form']);
+            $contact = implode(",", $_POST['contact_form']);
+        }
+
+        if (count($_POST['product_form']) > 0) {
+            $menu_id .= "," . implode(",", $_POST['product_form']);
+            $product = implode(",", $_POST['product_form']);
+        }
+
         // get data
         $qData = [
-            'name' => $this->input->post('name'),
-            'username' => $this->input->post('username'),
-            'phone' => $this->input->post('phone'),
-            'password' => $this->input->post('password'),
-            'role' => $this->input->post('role')
+            'si_admin_id' => $this->input->post('user'),
+            'si_menu_id' => $menu_id,
+            'client_form' => $client,
+            'contact_form' => $contact,
+            'product_form' => $product
         ];
 
         $response['status'] = 'success';
@@ -208,7 +244,7 @@ class UserPrivilige extends CI_Controller
         ];
 
         if ($id > 0) {
-            $sql = "select si_menu_assign_id as id,username,name,phone,password,role from si_menu_assign where status IN ('A', 'D') AND si_menu_assign_id=$id";
+            $sql = "select si_menu_assign_id as id,si_admin_id as user,client_form,contact_form,product_form from si_menu_assign where si_menu_assign_id=$id";
             $result = $this->ex->query($sql);
 
             if (!empty($result)) {
@@ -217,29 +253,21 @@ class UserPrivilige extends CI_Controller
                 $response['view_title'] = 'Update ' . ucwords(str_replace('-', ' ', $this->uri->segment(2)));
                 $response['form_element'] = [
                     [
-                        'name' => 'name',
-                        'type' => 'input',
-                    ],
-                    [
-                        'name' => 'username',
-                        'type' => 'input',
-                    ],
-                    [
-                        'name' => 'phone',
-                        'type' => 'input',
-                    ],
-                    [
-                        'name' => 'password',
-                        'type' => 'input',
-                    ],
-                    [
-                        'name' => 'confirm_password',
-                        'type' => 'input',
-                    ],
-                    [
-                        'name' => 'role',
+                        'name' => 'user',
                         'type' => 'select',
                     ],
+                    [
+                        'name' => 'client_form',
+                        'type' => 'multi-select',
+                    ],
+                    [
+                        'name' => 'contact_form',
+                        'type' => 'multi-select',
+                    ],
+                    [
+                        'name' => 'product_form',
+                        'type' => 'multi-select',
+                    ]
                 ];
                 $response['data'] = $result[0];
             }

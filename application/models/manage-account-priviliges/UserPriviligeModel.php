@@ -22,7 +22,8 @@ class UserPriviligeModel extends CI_Model
      * Run add query
      */
     function add($table, $data) {
-        $data['timestamp'] = date('Y-m-d H:i:s');
+        $data['create_date'] = date('Y-m-d H:i:s');
+        $data['modify_date'] = date('Y-m-d H:i:s');
         $this->db->insert($table, $data);
         return $this->db->insert_id();
     }
@@ -31,7 +32,7 @@ class UserPriviligeModel extends CI_Model
      * Run delete query
      */
     function update($table, $con, $data) {
-        $data['timestamp'] = date('Y-m-d H:i:s');
+        $data['modify_date'] = date('Y-m-d H:i:s');
         $this->db->where($con);        
         return $this->db->update($table, $data);
     }
