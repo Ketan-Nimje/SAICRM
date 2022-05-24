@@ -39,82 +39,23 @@
                 </li>
                 <!-- end Dashboard Menu -->
 
-                <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Follow up</span></li>
+                <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Tables</span></li>
 
-                <?php
-                $group_menu = [
-                    base_url() . 'manage-inquires/contact/',
-                    base_url() . 'manage-inquires/download-setup/',
-                    base_url() . 'manage-inquires/gst/',
-                    base_url() . 'manage-inquires/job/',
-                    base_url() . 'manage-inquires/product-download/',
-                    base_url() . 'manage-inquires/product/',
-                    base_url() . 'manage-inquires/quick/',
-                    base_url() . 'manage-inquires/transaction/',
-                ];
-                ?>
-
+                
                 <li class="nav-item">
-                    <a class="nav-link menu-link <?= in_array($_controller_path ?? "", $group_menu) ? 'collapsed active' : '' ?>" href="#sidebar3" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebar3">
-                        <i class="ri-question-answer-line"></i> <span data-key="t-sidebar3">Manage Inquires</span>
+                    <a class="nav-link menu-link <?= in_array($_controller_path ?? "", [base_url() . 'tables/client-master/']) ? 'active' : '' ?>" href="<?= base_url() ?>tables/client-master">
+                        <i class="ri-file-user-line"></i> <span data-key="t-client-master">Client Master</span>
                     </a>
-                    <div class="collapse menu-dropdown <?= in_array($_controller_path ?? "", $group_menu) ? 'show' : '' ?>" id="sidebar3">
-                        <ul class="nav nav-sm flex-column">
-                            <li class="nav-item">
-                                <a href="<?= base_url() ?>manage-inquires/contact" class="nav-link <?= in_array($_controller_path ?? "", [base_url() . 'manage-inquires/contact/']) ? 'active' : '' ?>" data-key="t-contact"> Contact </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="<?= base_url() ?>manage-inquires/download-setup" class="nav-link <?= in_array($_controller_path ?? "", [base_url() . 'manage-inquires/download-setup/']) ? 'active' : '' ?>" data-key="t-download-setup"> Download Setup </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="<?= base_url() ?>manage-inquires/gst" class="nav-link <?= in_array($_controller_path ?? "", [base_url() . 'manage-inquires/gst/']) ? 'active' : '' ?>" data-key="t-gst"> GST </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="<?= base_url() ?>manage-inquires/job" class="nav-link <?= in_array($_controller_path ?? "", [base_url() . 'manage-inquires/job/']) ? 'active' : '' ?>" data-key="t-job"> Job </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="<?= base_url() ?>manage-inquires/product-download" class="nav-link <?= in_array($_controller_path ?? "", [base_url() . 'manage-inquires/product-download/']) ? 'active' : '' ?>" data-key="t-product-download"> Product Download </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="<?= base_url() ?>manage-inquires/product" class="nav-link <?= in_array($_controller_path ?? "", [base_url() . 'manage-inquires/product/']) ? 'active' : '' ?>" data-key="t-product"> Product Inquiry </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="<?= base_url() ?>manage-inquires/quick" class="nav-link <?= in_array($_controller_path ?? "", [base_url() . 'manage-inquires/quick/']) ? 'active' : '' ?>" data-key="t-quick"> Quick </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="<?= base_url() ?>manage-inquires/transaction" class="nav-link <?= in_array($_controller_path ?? "", [base_url() . 'manage-inquires/transaction/']) ? 'active' : '' ?>" data-key="t-transaction"> Transaction </a>
-                            </li>
-                        </ul>
-                    </div>
+                </li>                
+                <li class="nav-item">
+                    <a class="nav-link menu-link <?= in_array($_controller_path ?? "", [base_url() . 'tables/client-view/']) ? 'active' : '' ?>" href="<?= base_url() ?>tables/client-view">
+                        <i class="ri-team-line"></i> <span data-key="t-client-view">Client View</span>
+                    </a>
                 </li>
-
-                <?php
-                $group_menu = [
-                    base_url() . 'manage-products/category/',
-                    base_url() . 'manage-products/product/',
-                ];
-                ?>
                 <li class="nav-item">
-                    <a class="nav-link menu-link <?= in_array($_controller_path ?? "", $group_menu) ? 'collapsed active' : '' ?>" href="#sidebar5" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebar5">
-                        <i class="ri-product-hunt-line"></i> <span data-key="t-sidebar5">Manage Products</span>
+                    <a class="nav-link menu-link <?= in_array($_controller_path ?? "", [base_url() . 'tables/transaction-master/']) ? 'active' : '' ?>" href="<?= base_url() ?>tables/transaction-master">
+                        <i class="ri-pages-line"></i> <span data-key="t-transaction-master">Transaction Master</span>
                     </a>
-                    <div class="collapse menu-dropdown <?= in_array($_controller_path ?? "", $group_menu) ? 'show' : '' ?>" id="sidebar5">
-                        <ul class="nav nav-sm flex-column">
-                            <li class="nav-item">
-                                <a href="<?= base_url() ?>manage-products/category" class="nav-link <?= in_array($_controller_path ?? "", [base_url() . 'manage-products/category/']) ? 'active' : '' ?>" data-key="t-category"> Category </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="<?= base_url() ?>manage-products/product" class="nav-link <?= in_array($_controller_path ?? "", [base_url() . 'manage-products/product/']) ? 'active' : '' ?>" data-key="t-product"> Product </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link menu-link <?= in_array($_controller_path ?? "", [base_url() . 'manage-seo/seo/']) ? 'active' : '' ?>" href="<?= base_url() ?>manage-seo/seo">
-                        <i class="ri-search-2-line"></i> <span data-key="t-seo">SEO</span>
-                    </a>
-
                 </li>
 
                 <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Pages</span></li>

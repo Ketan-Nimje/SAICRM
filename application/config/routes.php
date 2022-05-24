@@ -64,7 +64,26 @@ $route['logout'] = 'Auth/logout';
 $route['dashboard'] = 'Dashboard/index';
 $route['change-password'] = 'Dashboard/changePassword';
 
-// follow up routes: Manage Inquiries
+// follow up routes: tables
+$folder = 'tables/';
+
+$route["{$folder}client-master"] = "{$folder}ClientMaster/index";
+$route["{$folder}client-master/get_data"] = "{$folder}ClientMaster/get_data";
+$route["{$folder}client-master/add_update"] = "{$folder}ClientMaster/add_update";
+$route["{$folder}client-master/edit/(:num)"] = "{$folder}ClientMaster/edit/$1";
+$route["{$folder}client-master/show/(:num)"] = "{$folder}ClientMaster/show/$1";
+$route["{$folder}client-master/delete"] = "{$folder}ClientMaster/delete";
+$route["{$folder}client-master/change_status"] = "{$folder}ClientMaster/change_status";
+
+$route["{$folder}client-view"] = "{$folder}ClientView/index";
+$route["{$folder}client-view/get_data"] = "{$folder}ClientView/get_data";
+$route["{$folder}client-view/add_update"] = "{$folder}ClientView/add_update";
+$route["{$folder}client-view/edit/(:num)"] = "{$folder}ClientView/edit/$1";
+$route["{$folder}client-view/show/(:num)"] = "{$folder}ClientView/show/$1";
+$route["{$folder}client-view/delete"] = "{$folder}ClientView/delete";
+$route["{$folder}client-view/change_status"] = "{$folder}ClientView/change_status";
+
+// follow up routes: Configuration
 $folder = 'configuration/';
 
 $route["{$folder}contact"] = "{$folder}Contact/index";
