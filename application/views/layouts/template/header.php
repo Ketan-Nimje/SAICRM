@@ -261,6 +261,7 @@
                 </div>
 
                 <?php
+                /*
                 $get_header_counts = get_header_counts();
                 // print_r($get_header_counts);
                 $contact_count = count($get_header_counts['contact'] ?? []);
@@ -552,6 +553,7 @@
                         <?php endif; ?>
                     </div>
                 </div>
+                */ ?>
 
                 <div class="dropdown ms-sm-3 header-item topbar-user">
                     <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

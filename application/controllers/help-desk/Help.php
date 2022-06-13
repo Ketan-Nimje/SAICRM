@@ -12,7 +12,7 @@ class Help extends CI_Controller
     function __construct()
     {
         parent::__construct();
-        // auth_check();
+        auth_check();
         $this->module_folder = $this->uri->segment(1);
         $this->module = $this->uri->segment(2);
         $this->module_table_prefix = 'si_helpdesk_';

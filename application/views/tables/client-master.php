@@ -72,7 +72,10 @@
                                             <thead>
                                                 <tr>
                                                     <th>#</th>
-                                                    <th>Year Name</th>
+                                                    <th>Customer Name</th>
+                                                    <th>Firm Name</th>
+                                                    <th>Mobile No.</th>
+                                                    <th>Email</th>
                                                     <th>Created Date</th>
                                                     <th>Updated Date</th>
                                                     <th>Action</th>
@@ -117,11 +120,47 @@
                         <input type="hidden" name="id" value="0" id="id-field" class="form-control" placeholder="ID" required />
                         <div class="mb-3"><p class="float-end"><label class="required"></label> = Mandatory field(s).</p></div>
                         <div class="mb-3">
-                            <label for="year-name-field" class="form-label required">Year Name: </label>
-                            <small>Ex: 2022</small>
-                            <input type="text" name="yearname" id="year-name-field" class="form-control" placeholder="Enter Year Name" required />
+                            <label for="name-field" class="form-label required">Name:</label>
+                            <input type="text" name="name" id="name-field" class="form-control" placeholder="Enter Name" required />
                             <div class="invalid-feedback">
-                                Please enter year name.
+                                Please enter name.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone-field" class="form-label required">Phone:</label>
+                            <input type="text" name="phone" id="phone-field" class="form-control" placeholder="Enter Phone" required />
+                            <div class="invalid-feedback">
+                                Please enter phone.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="username-field" class="form-label required">Username:</label>
+                            <input type="text" name="username" id="username-field" class="form-control" placeholder="Enter Username" required />
+                            <div class="invalid-feedback">
+                                Please enter username.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password-field" class="form-label required">Password:</label>
+                            <input type="password" minlength="3" maxlength="20" name="password" id="password-field" class="form-control" placeholder="Enter Password" required />
+                            <div class="invalid-feedback">
+                                Please enter password.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="role-field" class="form-label required">Role:</label>
+                            <select class="form-control" name="role" id="role-field" required>
+                                <option value="">--- Select Role ---</option>
+                                <?php
+                                foreach ($roles as $rKey => $role) {
+                                    ?>
+                                    <option value="<?= $rKey ?>"><?= $role ?></option>
+                                    <?php
+                                }
+                                 ?>
+                            </select>
+                            <div class="invalid-feedback">
+                                Please select role.
                             </div>
                         </div>
                     </div>
@@ -135,7 +174,6 @@
             </div>
         </div>
     </div>
-
 
     <!-- include footer links -->
     <?php $this->load->view('layouts/template/footerLinks'); ?>

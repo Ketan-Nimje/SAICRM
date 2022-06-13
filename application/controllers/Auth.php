@@ -52,7 +52,7 @@ class Auth extends CI_Controller {
                 }
             }
         } else {
-            $data['_view_title'] = 'Sign In | Saiinfotech - Admin';
+            $data['_view_title'] = 'Sign In | SaiCRM Control Panel';
             $data['navbar'] = true;
             $data['sidebar'] = true;
             $data['footer'] = true;
@@ -66,7 +66,7 @@ class Auth extends CI_Controller {
     //-----------------------------------------------------------------------
     public function logout() {
         $this->session->sess_destroy();
-        redirect(base_url('auth/login'), 'refresh');
+        redirect(base_url(), 'refresh');
     }
 
 }

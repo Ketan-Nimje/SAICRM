@@ -6,3 +6,9 @@ span.me-3.rounded-circle.avatar-sm.p-2.bg-light {
     content:"*";
     color: #e5343d;
 }
+.dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody {
+    max-height: calc(100vh - 330px) !important;
+}
+.page-content.listing {
+    padding-bottom: 0;
+}
