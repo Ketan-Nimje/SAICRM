@@ -11,8 +11,8 @@ if (!function_exists('auth_check')) {
     function auth_check() {
         // Get a reference to the controller object
         $ci = &get_instance();
-        if (!$ci->session->has_userdata('is_admin_login')) {
-            redirect(base_url('auth/login'), 'refresh');
+        if (!$ci->session->has_userdata('id')) {
+            redirect(base_url(), 'refresh');
         }
     }
 

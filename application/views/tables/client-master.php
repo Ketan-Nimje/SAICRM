@@ -28,7 +28,7 @@
         <!-- Start right Content here -->
         <!-- ============================================================== -->
         <div class="main-content">
-            <div class="page-content">
+            <div class="page-content listing">
                 <div class="container-fluid">
                     <!-- start page title -->
                     <div class="row">
@@ -72,7 +72,7 @@
                                             <thead>
                                                 <tr>
                                                     <th>#</th>
-                                                    <th>Name</th>
+                                                    <th>Customer Name</th>
                                                     <th>Firm Name</th>
                                                     <th>Mobile No.</th>
                                                     <th>Email</th>

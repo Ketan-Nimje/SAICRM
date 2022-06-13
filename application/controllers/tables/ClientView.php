@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class ClientMaster extends CI_Controller
+class ClientView extends CI_Controller
 {
     public $module_folder;
     public $module;
@@ -21,7 +21,7 @@ class ClientMaster extends CI_Controller
         $this->module_table = 'si_clients';
         $this->view_data['_controller_path'] = base_url() . $this->module_folder . '/' . $this->module . '/';
         $this->view_data['registed_mobile'] = ['SA' => 'Admin', 'TL' => 'Team Leader', 'A' => 'Staff'];
-        $this->load->model($this->module_folder . '/ClientMasterModel', 'ex');
+        $this->load->model($this->module_folder . '/ClientViewModel', 'ex');
     }
 
     /**
@@ -42,34 +42,57 @@ class ClientMaster extends CI_Controller
     function get_data()
     {
         $requestData = $_REQUEST;
+        $status = " sc.status IN ('A','D') ";
+        $scd_status = " AND scd.status IN ('A','D') ";
 
         $columns = array(
             // datatable column index  => database column name
-            0 => 'si_clients_id',
-            1 => 'contact_person',
-            2 => 'firm_name',
-            3 => 'registed_mobile',
-            4 => 'register_email',
-            5 => 'created_at',
-            6 => 'updated_at'
+            0 => 'sc.created_at',
+            1 => 'sc.contact_person',
+            2 => 'sc.firm_name',
+            3 => 'sc.registed_mobile',
+            4 => 'sc.register_email',
+            5 => 'scd.serial_no',
+            6 => 'scd.activation_code',
         );
 
-        $sql = "select si_clients_id,contact_person,firm_name,registed_mobile,register_email,created_at,updated_at,status from si_clients where status IN ('A', 'D')";
+        $sql = "SELECT sc.si_clients_id,
+        sc.contact_person,
+        sc.firm_name,
+    sc.registed_mobile,
+    sc.register_email,
+    scd.serial_no,
+    scd.activation_code,
+    sc.status,
+    sc.Client_Assigned AS Client_Assigned,
+    (
+        SELECT
+            GROUP_CONCAT(ff.name)
+        FROM
+            si_admin ff
+        WHERE
+            sc.Client_Assigned = ff.si_admin_id AND sc.Client_Assigned IS NOT NULL
+    ) AS Admin_Name
+    FROM
+        si_clients sc
+    INNER JOIN si_clients_details scd ON (sc.si_clients_id = scd.si_clients_id $scd_status)
+    WHERE $status";
+
+
+
+        if (!empty(trim($requestData['search']['value']))) {   // if there is a search parameter, $requestData['search']['value'] contains search parameter
+            $sql .= " AND ( " . "sc.contact_person LIKE '%" . $requestData['search']['value'] . "%' ";
+            $sql .= " OR sc.firm_name LIKE '%" . $requestData['search']['value'] . "%' ";
+            $sql .= " OR sc.registed_mobile LIKE '%" . $requestData['search']['value'] . "%' ";
+            $sql .= " OR sc.register_email LIKE '%" . $requestData['search']['value'] . "%' ";
+            $sql .= " OR scd.serial_no LIKE '%" . $requestData['search']['value'] . "%') ";
+        }
+        $sql .= " group by sc.si_clients_id";
         $query = $this->ex->query($sql);
 
         $totalData = count($query);
 
-
-        if (!empty(trim($requestData['search']['value']))) {   // if there is a search parameter, $requestData['search']['value'] contains search parameter
-            $searchString = "'%" . str_replace(",", "','", trim($requestData['search']['value'])) . "%'"; //wrapping qoutation
-            $sql .= " and ( contact_person  LIKE " . $searchString;
-            $sql .= " or registed_mobile  LIKE " . $searchString;
-            $sql .= " or register_email  LIKE " . $searchString;
-            $sql .= " or firm_name  LIKE " . $searchString . ")";
-        }
-        $query = $this->ex->query($sql);
-
-        $totalFiltered = count($query); // when there is a search parameter then we have to modify total number filtered rows as per search result.
+        $totalFiltered = $totalData; // when there is a search parameter then we have to modify total number filtered rows as per search result.
 
 
         $sql .= " ORDER BY " . $columns[$requestData['order'][0]['column']] . "   " . $requestData['order'][0]['dir'] . " LIMIT " . $requestData['start'] . " ," . $requestData['length'] . "   ";  // adding length
@@ -89,19 +112,50 @@ class ClientMaster extends CI_Controller
             }
 
             $action = '';
+            $info = "<a class='client_info btn-small' data-id='" . $row[$this->module_table_prefix . 'id'] . "' title='View Client Detail'><i class='btn btn-sm btn-rounded btn-outline-primary ri-article-line'></i></a>";
+            $edit = "<a class='edit btn-small' data-id='" . $row[$this->module_table_prefix . 'id'] . "' data-isstatus='" . $row['status'] . "' data-status='" . $row['status'] . "' title='View Product'><i class='btn btn-sm btn-rounded btn-outline-info ri-product-hunt-line'></i></a>";
+            $remark = "<a class='remark btn-small' data-id='" . $row[$this->module_table_prefix . 'id'] . "' data-isstatus='" . $row['status'] . "' data-status='B' title='Remark'><i class='btn btn-sm btn-rounded btn-outline-secondary ri-file-edit-line'></i></a>";
+            $pay = "<a class='pay btn-small' btn-small' data-id='" . $row[$this->module_table_prefix . 'id'] . "' data-isstatus='" . $row['status'] . "' title='Pay'><i class='btn btn-sm btn-rounded btn-outline-warning ri-paypal-line'></i></a>";
+            $mail = "<a class='mail btn-small' btn-small' data-mailid='" . $row['register_email'] . "' data-serial='" . $row['serial_no'] . "' data-isstatus='" . $row['status'] . "' title='Customer mail Inquiry'><i class='btn btn-sm btn-rounded btn-outline-dark ri-mail-line'></i></a>";
+            $whatsapp = "<a class='whatsapp btn-small' data-isstatus='" . $row['status'] . "' data-id='" . $row['registed_mobile'] . "' id='" . $row[$this->module_table_prefix . 'id'] . "' title='Send WhatsApp' ><i class='btn btn-sm btn-rounded btn-outline-success ri-whatsapp-line
+            '></i></a>";
+
+            $n = $row['Client_Assigned'];
+            if ($n) {
+                $t = $row['Admin_Name'];
+                $style1 = 'background-color: rgb(19, 218, 254);border-color: rgb(19, 218, 254);box-shadow: rgb(19, 218, 254) 0px 0px 0px 11px inset;transition: border 0.4s ease 0s, box-shadow 0.4s ease 0s, background-color 1.2s ease 0s;';
+                $style2 = 'left:13px;transition: background-color 0.4s ease 0s,left 0.2s ease 0s; background-color:rgb(255, 255, 255);';
+            } else {
+                $t = 'Turn ON';
+                $style1 = 'background-color: rgb(255, 255, 255);border-color: rgb(223, 223, 223);box-shadow: rgb(223, 223, 223) 0px 0px 0px 0px inset;transition: border 0.4s ease 0s, box-shadow 0.4s ease 0s;';
+                $style2 = 'left: 0px; transition: background-color 0.4s ease 0s, left 0.2s ease 0s;';
+            }
+
+            $toggle = '<a class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="' . $row[$this->module_table_prefix . 'id'] . 'ed" onclick="ed(' . $row[$this->module_table_prefix . 'id'] . ');" title="' . $t . '" hb="' . $n . '" by="' . $t . '">
+            </a>';
+
+            // $toggle = '<span  id="' . $row[$this->module_table_prefix . 'id'] . 'ed" onclick="ed(' . $row[$this->module_table_prefix . 'id'] . ');" class="switchery switchery-small" 
+            // style="' . $style1 . '" title="' . $t . '" hb="' . $n . '" by="' . $t . '"><small id="' . $row[$this->module_table_prefix . 'id'] . 'ed1" style="' . $style2 . '"></small></span>';
+
             $action = "<a class='change-status m-1' data-url='" . $this->view_data['_controller_path'] . "change_status' data-id='" . $row["si_clients_id"] . "' data-module='" . $this->module . "' data-status='" . $stts . "'><i class='btn btn-sm btn-rounded " . $icon . "' aria-hidden='true'></i></a>";
             $action .= "<a data-modal='showModal' data-url='" . $this->view_data['_controller_path'] . "edit/" . $row["si_clients_id"] . "' class='edit-row me-1'><i class='btn btn-sm btn-rounded btn-outline-info ri-edit-line'></i></a>";
             $action .= "<a data-url='" . $this->view_data['_controller_path'] . "delete' data-id='" . $row["si_clients_id"] . "' data-module='" . $this->module . "' class='delete-row'><i class='btn btn-outline-danger btn-sm btn-rounded ri-delete-bin-line'></i></a>";
 
             $nestedData = array();
-            $nestedData[] = $cnts++;
+            $nestedData[] = $info." ". $cnts++;
             $nestedData[] = to_title_case($row["contact_person"]);
             $nestedData[] = $row["firm_name"];
             $nestedData[] = $row['registed_mobile'];
             $nestedData[] = $row['register_email'];
-            $nestedData[] = display_datetime($row["created_at"]);
-            $nestedData[] = display_datetime($row["updated_at"]);
-            $nestedData[] = $action;
+            $nestedData[] = $row['serial_no'];
+            // $nestedData[] = $action;
+            if ($this->session->userdata('id') == 1)
+                $nestedData[] = $edit . "&nbsp;" . $remark . "&nbsp;" . $pay . "&nbsp;" . $mail . "&nbsp" . $whatsapp . "&nbsp" . $toggle;
+            elseif ($this->session->userdata('id') == 17 || $this->session->userdata('id') == 19)
+                $nestedData[] = $edit . "&nbsp;" . $remark . "&nbsp;" . $pay . "&nbsp;" . $mail . "&nbsp" . $whatsapp . "&nbsp" . $toggle;
+            else
+                $nestedData[] = $edit . "&nbsp;" . $remark . "&nbsp;" . $mail . "&nbsp;" . $whatsapp . "&nbsp" . $toggle;
             $nestedData['DT_RowId'] = "r" . $row['si_clients_id'];
             $data[] = $nestedData;
         }
@@ -141,7 +195,7 @@ class ClientMaster extends CI_Controller
         } else {
             $is_unique =  '';
         }
-        $this->form_validation->set_rules('contact_person', 'ClientMastername', 'trim|required' . $is_unique);
+        $this->form_validation->set_rules('contact_person', 'ClientViewname', 'trim|required' . $is_unique);
         $this->form_validation->set_rules('firm_name', 'Phone', 'trim|required|min_length[10]|max_length[15]');
         $this->form_validation->set_rules('register_email', 'Password', 'trim|required|min_length[3]|max_length[20]');
         $this->form_validation->set_rules('registed_mobile', 'Role', 'trim|required');

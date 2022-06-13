@@ -58,20 +58,20 @@
                     </a>
                 </li>
 
-                <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Pages</span></li>
+                <!-- <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Pages</span></li> -->
 
                 <?php
-                $group_menu = [
-                    base_url() . 'manage-homepage/announcement/',
-                    base_url() . 'manage-homepage/client/',
-                    base_url() . 'manage-homepage/home-popup/',
-                    base_url() . 'manage-homepage/slider/',
-                    base_url() . 'manage-homepage/software-feature/',
-                    base_url() . 'manage-homepage/testimoinal/',
-                    base_url() . 'manage-homepage/welcome/',
-                ];
+                // $group_menu = [
+                //     base_url() . 'manage-homepage/announcement/',
+                //     base_url() . 'manage-homepage/client/',
+                //     base_url() . 'manage-homepage/home-popup/',
+                //     base_url() . 'manage-homepage/slider/',
+                //     base_url() . 'manage-homepage/software-feature/',
+                //     base_url() . 'manage-homepage/testimoinal/',
+                //     base_url() . 'manage-homepage/welcome/',
+                // ];
                 ?>
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link menu-link <?= in_array($_controller_path ?? "", $group_menu) ? 'collapsed active' : '' ?>" href="#sidebar2" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebar2">
                         <i class="ri-layout-3-line"></i> <span data-key="t-sidebar2">Manage Homepage</span>
                     </a>
@@ -100,23 +100,23 @@
                             </li>
                         </ul>
                     </div>
-                </li>
+                </li> -->
 
                 <?php
-                $group_menu = [
-                    base_url() . 'manage-custom-pages/about-us/',
-                    base_url() . 'manage-custom-pages/bank-detail/',
-                    base_url() . 'manage-custom-pages/career-job/',
-                    base_url() . 'manage-custom-pages/career/',
-                    base_url() . 'manage-custom-pages/contact-info/',
-                    base_url() . 'manage-custom-pages/digital-sign/',
-                    base_url() . 'manage-custom-pages/faq/',
-                    base_url() . 'manage-custom-pages/privacy/',
-                    base_url() . 'manage-custom-pages/social-media/',
-                    base_url() . 'manage-custom-pages/term/',
-                ];
+                // $group_menu = [
+                //     base_url() . 'manage-custom-pages/about-us/',
+                //     base_url() . 'manage-custom-pages/bank-detail/',
+                //     base_url() . 'manage-custom-pages/career-job/',
+                //     base_url() . 'manage-custom-pages/career/',
+                //     base_url() . 'manage-custom-pages/contact-info/',
+                //     base_url() . 'manage-custom-pages/digital-sign/',
+                //     base_url() . 'manage-custom-pages/faq/',
+                //     base_url() . 'manage-custom-pages/privacy/',
+                //     base_url() . 'manage-custom-pages/social-media/',
+                //     base_url() . 'manage-custom-pages/term/',
+                // ];
                 ?>
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link menu-link <?= in_array($_controller_path ?? "", $group_menu) ? 'collapsed active' : '' ?>" href="#sidebar4" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebar4">
                         <i class="ri-settings-3-line"></i> <span data-key="t-sidebar4">Manage Custom Pages</span>
                     </a>
@@ -154,7 +154,7 @@
                             </li>
                         </ul>
                     </div>
-                </li>
+                </li> -->
 
                 <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-user-or-team">Manage Account & Priviliges</span></li>
 
