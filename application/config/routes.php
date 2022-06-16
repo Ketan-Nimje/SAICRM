@@ -83,6 +83,14 @@ $route["{$folder}client-view/show/(:num)"] = "{$folder}ClientView/show/$1";
 $route["{$folder}client-view/delete"] = "{$folder}ClientView/delete";
 $route["{$folder}client-view/change_status"] = "{$folder}ClientView/change_status";
 
+$route["{$folder}transactions-detail"] = "{$folder}TransactionsDetail/index";
+$route["{$folder}transactions-detail/get_data"] = "{$folder}TransactionsDetail/get_data";
+$route["{$folder}transactions-detail/add_update"] = "{$folder}TransactionsDetail/add_update";
+$route["{$folder}transactions-detail/edit/(:num)"] = "{$folder}TransactionsDetail/edit/$1";
+$route["{$folder}transactions-detail/show/(:num)"] = "{$folder}TransactionsDetail/show/$1";
+$route["{$folder}transactions-detail/delete"] = "{$folder}TransactionsDetail/delete";
+$route["{$folder}transactions-detail/change_status"] = "{$folder}TransactionsDetail/change_status";
+
 // follow up routes: Configuration
 $folder = 'configuration/';
 

@@ -55,7 +55,7 @@
                                     <div class="row g-4 mb-0">
                                         <div class="col-sm-auto">
                                             <div>
-                                                <h4 class="card-title mb-0">Listing</h4>
+                                                <h4 class="card-title mb-0">List</h4>
                                             </div>
                                         </div>
                                         <div class="col-sm">
@@ -108,7 +108,7 @@
     <!-- include footer componant -->
     <?php $this->load->view('layouts/template/_footerComponant'); ?>
 
-    <div class="modal fade" id="showModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal flip" id="showModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-light p-3">

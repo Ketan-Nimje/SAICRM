@@ -22,6 +22,9 @@
 <!-- Dashboard init -->
 <!-- <script src="<?= base_url() ?>assets/js/pages/dashboard-ecommerce.init.js"></script> -->
 
+<!-- form wizard init -->
+<script src="<?= base_url() ?>assets/js/pages/form-wizard.init.js"></script>
+
 <!-- App js -->
 <script src="<?= base_url() ?>assets/js/app.js"></script>
 

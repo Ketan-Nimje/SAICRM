@@ -68,15 +68,24 @@
 
                                 <div class="card-body">
                                     <div id="table-fixed-header">
-                                        <table id="example" class="stripe row-border order-column nowrap" style="width:100%">
+                                        <table id="example" class="stripe row-border order-column" style="width:100%">
                                             <thead>
                                                 <tr>
                                                     <th>#</th>
                                                     <th>Customer Name</th>
-                                                    <th>Firm Name</th>
-                                                    <th>Mobile No.</th>
-                                                    <th>Email</th>
+                                                    <th>Product Name</th>
                                                     <th>Serial No</th>
+                                                    <th>Group</th>
+                                                    <th>Session</th>
+                                                    <th>Amt.</th>
+                                                    <th>Purchase Amt.</th>
+                                                    <th>Tax Amt.</th>
+                                                    <th>LAN</th>
+                                                    <th>LAN Amt.</th>
+                                                    <th>Bill No.</th>
+                                                    <th>Payment Type</th>
+                                                    <th>Bill Remark</th>
+                                                    <th nowrap>Trans. Date</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>

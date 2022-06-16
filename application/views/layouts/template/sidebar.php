@@ -53,8 +53,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link <?= in_array($_controller_path ?? "", [base_url() . 'tables/transaction-master/']) ? 'active' : '' ?>" href="<?= base_url() ?>tables/transaction-master">
-                        <i class="ri-pages-line"></i> <span data-key="t-transaction-master">Transaction Master</span>
+                    <a class="nav-link menu-link <?= in_array($_controller_path ?? "", [base_url() . 'tables/transactions-detail/']) ? 'active' : '' ?>" href="<?= base_url() ?>tables/transactions-detail">
+                        <i class="ri-pages-line"></i> <span data-key="t-transactions-detail">Transaction Master</span>
                     </a>
                 </li>
 

@@ -55,7 +55,7 @@
                                     <div class="row g-4 mb-0">
                                         <div class="col-sm-auto">
                                             <div>
-                                                <h4 class="card-title mb-0">Listing</h4>
+                                                <h4 class="card-title mb-0">List</h4>
                                             </div>
                                         </div>
                                         <div class="col-sm">
@@ -107,8 +107,8 @@
     <!-- include footer componant -->
     <?php $this->load->view('layouts/template/_footerComponant'); ?>
 
-    <div class="modal fade" id="showModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog modal-lg">
+    <div class="modal zoomIn" id="showModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header bg-light p-3">
                     <h5 class="modal-title" id="exampleModalLabel">Add <?= $_view_title ?></h5>
@@ -117,57 +117,280 @@
                 <form data-modal="showModal" method="POST" action="<?= $_controller_path ?>add_update" class="needs-validation form-submit" novalidate>
                     <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
                     <div class="modal-body">
-                        <input type="hidden" name="id" value="0" id="id-field" class="form-control" placeholder="ID" required />
-                        <div class="mb-3"><p class="float-end"><label class="required"></label> = Mandatory field(s).</p></div>
-                        <div class="mb-3">
-                            <label for="name-field" class="form-label required">Name:</label>
-                            <input type="text" name="name" id="name-field" class="form-control" placeholder="Enter Name" required />
-                            <div class="invalid-feedback">
-                                Please enter name.
-                            </div>
+                        <input type="hidden" name="id" value="0" id="id-field" class="form-control form-control-sm" placeholder="ID" required />
+                        <div class="row text-end d-none">
+                            <p><label class="required"></label> = Mandatory field(s).</p>
                         </div>
-                        <div class="mb-3">
-                            <label for="phone-field" class="form-label required">Phone:</label>
-                            <input type="text" name="phone" id="phone-field" class="form-control" placeholder="Enter Phone" required />
-                            <div class="invalid-feedback">
-                                Please enter phone.
-                            </div>
+                        <div>
+                            <h5>Customer Info</h5>
+                            <p class="text-muted">Fill all mandatory information below</p>
                         </div>
-                        <div class="mb-3">
-                            <label for="username-field" class="form-label required">Username:</label>
-                            <input type="text" name="username" id="username-field" class="form-control" placeholder="Enter Username" required />
-                            <div class="invalid-feedback">
-                                Please enter username.
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label for="contact_person-field" class="form-label required">Contact Person:</label>
+                                <input type="text" name="contact_person" id="contact_person-field" class="form-control form-control-sm" placeholder="Enter Contact Person" required />
+                                <div class="invalid-feedback">
+                                    Please enter contact person.
+                                </div>
                             </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="password-field" class="form-label required">Password:</label>
-                            <input type="password" minlength="3" maxlength="20" name="password" id="password-field" class="form-control" placeholder="Enter Password" required />
-                            <div class="invalid-feedback">
-                                Please enter password.
+                            <div class="col-md-3">
+                                <label for="firm_name-field" class="form-label required">Firm Name:</label>
+                                <input type="text" name="firm_name" id="firm_name-field" class="form-control form-control-sm" placeholder="Enter Firm Name" required />
+                                <div class="invalid-feedback">
+                                    Please enter firm name.
+                                </div>
                             </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="role-field" class="form-label required">Role:</label>
-                            <select class="form-control" name="role" id="role-field" required>
-                                <option value="">--- Select Role ---</option>
-                                <?php
-                                foreach ($roles as $rKey => $role) {
-                                    ?>
-                                    <option value="<?= $rKey ?>"><?= $role ?></option>
+                            <div class="col-md-3">
+                                <label for="mobile-field" class="form-label required">Mobile No:</label>
+                                <input type="text" name="mobile" id="mobile-field" class="form-control form-control-sm" placeholder="Enter Mobile No." required />
+                                <div class="invalid-feedback">
+                                    Please enter mobile no.
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="email-field" class="form-label required">Email Address:</label>
+                                <input type="email" name="email" id="email-field" class="form-control form-control-sm" placeholder="Enter Email Address" required />
+                                <div class="invalid-feedback">
+                                    Please enter email address.
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="address1-field" class="form-label required">Address 1:</label>
+                                <input type="text" name="address1" id="address1-field" class="form-control form-control-sm" placeholder="Enter Address 1" required />
+                                <div class="invalid-feedback">
+                                    Please enter address 1.
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="address2-field" class="form-label">Address 2:</label>
+                                <input type="text" name="address2" id="address2-field" class="form-control form-control-sm" placeholder="Enter Address 2" />
+                                <div class="invalid-feedback">
+                                    Please enter address 2.
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="area-field" class="form-label required">Area:</label>
+                                <input type="text" name="area" id="area-field" class="form-control form-control-sm" placeholder="Enter Area" required />
+                                <div class="invalid-feedback">
+                                    Please enter area.
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="city-field" class="form-label required">City:</label>
+                                <input type="text" name="city" id="city-field" class="form-control form-control-sm" placeholder="Enter City" required />
+                                <div class="invalid-feedback">
+                                    Please enter city.
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="state-field" class="form-label required">State:</label>
+                                <select class="form-control form-control-sm" name="state" id="state-field" required>
+                                    <option value="">--- Select State ---</option>
                                     <?php
-                                }
-                                 ?>
-                            </select>
-                            <div class="invalid-feedback">
-                                Please select role.
+                                    foreach ($states as $sKey => $state) {
+                                    ?>
+                                        <option value="<?= $state['si_state_id'] ?>"><?= $state['name'] ?></option>
+                                    <?php
+                                    }
+                                    ?>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please select state.
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="pincode-field" class="form-label required">Pincode:</label>
+                                <input type="text" name="pincode" id="pincode-field" class="form-control form-control-sm" placeholder="Enter Pincode" required />
+                                <div class="invalid-feedback">
+                                    Please enter pincode.
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="my-4 text-muted">
+                        <div>
+                            <h5>Contact Info</h5>
+                            <p class="text-muted">Fill all mandatory information below</p>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label for="mobile1-field" class="form-label">Mobile No. 1:</label>
+                                <input type="text" name="mobile1" id="mobile1-field" class="form-control form-control-sm" placeholder="Enter Mobile No 1" />
+                            </div>
+                            <div class="col-md-2">
+                                <label for="mobile2-field" class="form-label">Mobile No. 2:</label>
+                                <input type="text" name="mobile2" id="mobile2-field" class="form-control form-control-sm" placeholder="Enter Mobile No 2" />
+                            </div>
+                            <div class="col-md-2">
+                                <label for="mobile3-field" class="form-label">Mobile No. 3:</label>
+                                <input type="text" name="mobile3" id="mobile3-field" class="form-control form-control-sm" placeholder="Enter Mobile No 3" />
+                            </div>
+                            <div class="col-md-2">
+                                <label for="phone1-field" class="form-label">Phone No. 1:</label>
+                                <input type="text" name="phone1" id="phone1-field" class="form-control form-control-sm" placeholder="Enter Phone No 1" />
+                            </div>
+                            <div class="col-md-2">
+                                <label for="phone2-field" class="form-label">Phone No. 2:</label>
+                                <input type="text" name="phone2" id="phone2-field" class="form-control form-control-sm" placeholder="Enter Phone No 2" />
+                            </div>
+                            <div class="col-md-2">
+                                <label for="gstno-field" class="form-label">GST No.:</label>
+                                <input type="text" name="gstno" id="gstno-field" class="form-control form-control-sm" placeholder="Enter GST No." />
+                            </div>
+                        </div>
+                        <hr class="my-4 text-muted">
+                        <div>
+                            <h5>Product Info</h5>
+                            <p class="text-muted">Fill all mandatory information below</p>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label for="referby-field" class="form-label required">Referred By:</label>
+                                <select class="form-control form-control-sm" name="referby" id="referby-field">
+                                    <option value="">Admin</option>
+                                    <?php
+                                    foreach ($users as $uKey => $user) {
+                                    ?>
+                                        <option value="<?= $user['si_admin_id'] ?>"><?= $user['name'] ?></option>
+                                    <?php
+                                    }
+                                    ?>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please select refer by.
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="category-field" class="form-label">Type:</label>
+                                <select class="form-control form-control-sm" name="category" id="category-field">
+                                    <option value="1">Installation</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please select type.
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="product-field" class="form-label">Product:</label>
+                                <select class="form-control form-control-sm" name="product" id="product-field">
+                                    <option value="">--- Select Product ---</option>
+                                    <?php
+                                    foreach ($products as $pKey => $product) {
+                                    ?>
+                                        <option value="<?= $product['si_product_id'] ?>"><?= $product['p_name'] ?></option>
+                                    <?php
+                                    }
+                                    ?>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please select product.
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="conversion_product-field" class="form-label">Conversion Product:</label>
+                                <select class="form-control form-control-sm" name="conversion_product" id="conversion_product-field">
+                                    <option value="0">Conversion Product</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please select conversion product.
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="laptop-field" class="form-label">Laptop Device:</label>
+                                <select class="form-control form-control-sm" name="laptop" id="laptop-field">
+                                    <?php
+                                    foreach ($laptop_devices as $lKey => $ld) {
+                                    ?>
+                                        <option value="<?= $lKey ?>"><?= $ld ?></option>
+                                    <?php
+                                    }
+                                    ?>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please select laptop device.
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="reg_type-field" class="form-label">Reg. Type:</label>
+                                <select class="form-control form-control-sm" name="reg_type" id="reg_type-field">
+                                    <?php
+                                    foreach ($reg_types as $rKey => $rt) {
+                                    ?>
+                                        <option value="<?= $rKey ?>"><?= $rt ?></option>
+                                    <?php
+                                    }
+                                    ?>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please select Reg. Type.
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="for_year-field" class="form-label">For Year:</label>
+                                <select class="form-control form-control-sm" name="for_year" id="for_year-field">
+                                    <?php
+                                    foreach ($for_years as $fKey => $fy) {
+                                    ?>
+                                        <option value="<?= $fy['si_for_year_id'] ?>"><?= $fy['yearname'] ?></option>
+                                    <?php
+                                    }
+                                    ?>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please select for year.
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="serial_no-field" class="form-label">Serial No./HLock No.:</label>
+                                <input type="text" name="serial_no" id="serial_no-field" class="form-control form-control-sm" placeholder="Enter Serial No./HLock No." />
+                            </div>
+                            <div class="col-md-2">
+                                <label for="activation_code-field" class="form-label">Activation Code:</label>
+                                <input type="text" name="activation_code" id="activation_code-field" class="form-control form-control-sm" placeholder="Enter Activation Code" />
+                            </div>
+                            <div class="col-md-2">
+                                <label for="purchase_date-field" class="form-label">Purchase Date:</label>
+                                <input type="text" name="purchase_date" id="purchase_date-field" class="form-control form-control-sm" placeholder="Enter Purchase Date" />
+                            </div>
+                            <div class="col-md-2">
+                                <label for="renewal_date-field" class="form-label">Renewal Date:</label>
+                                <input type="text" name="renewal_date" id="renewal_date-field" class="form-control form-control-sm" placeholder="Enter Renewal Date" />
+                            </div>
+                            <div class="col-md-3">
+                                <label for="srv_lan-field" class="form-label">Srv/Lan:</label>
+                                <select class="form-control form-control-sm" name="srv_lan" id="srv_lan-field">
+                                    <?php
+                                    foreach ($lan_types as $lKey => $lt) {
+                                    ?>
+                                        <option value="<?= $lKey ?>"><?= $lt ?></option>
+                                    <?php
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="srv_lan_no-field" class="form-label">Srv/Lan No.:</label>
+                                <input type="text" name="srv_lan_no" id="srv_lan_no-field" class="form-control form-control-sm" placeholder="Enter Srv/Lan No." />
+                            </div>
+                            <div class="col-md-4">
+                                <input class="form-check-input" type="checkbox" id="change_email-field" name="change_email" value="1">
+                                <label class="form-check-label me-2" for="change_email-field">
+                                    Change Email
+                                </label>
+                                <a href="<?= base_url() ?>assets/pdf/RequestForEmailidChangeForm.pdf" class="badge badge-outline-primary ms-1" target="_blank" title="View & Download PDF"><i class="ri-file-ppt-line label-icon align-middle fs-16 me-2"></i>View & Download</a>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">Upload Form:</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="file" name="change_email_form" id="change_email_form-field" class="form-control form-control-sm" placeholder="Upload Form" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <div class="hstack gap-2 justify-content-end">
-                            <button type="button" class="btn btn-sm btn-light btn-label waves-effect waves-light rounded-pill" data-bs-dismiss="modal"><i class="ri-close-line label-icon align-middle rounded-pill fs-16 me-2"></i> Close</button>
-                            <button type="submit" id="edit-btn" class="btn btn-sm btn-success btn-label waves-effect waves-light rounded-pill"><i class="ri-check-double-line label-icon align-middle rounded-pill fs-16 me-2"></i> Add <?= $_view_title ?></button>
+                            <button type="button" class="btn btn-sm btn-light btn-label waves-effect waves-light rounded-pill" data-bs-dismiss="modal"><i class="ri-close-line label-icon align-middle fs-16 me-2"></i> Close</button>
+                            <button type="submit" id="edit-btn" class="btn btn-sm btn-success btn-label waves-effect waves-light rounded-pill"><i class="ri-check-double-line label-icon align-middle fs-16 me-2"></i> Add <?= $_view_title ?></button>
                         </div>
                     </div>
                 </form>

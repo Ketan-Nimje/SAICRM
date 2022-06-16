@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class ClientMaster extends CI_Controller
+class TransactionsDetail extends CI_Controller
 {
     public $module_folder;
     public $module;
@@ -12,18 +12,14 @@ class ClientMaster extends CI_Controller
 
     function __construct()
     {
-
         parent::__construct();
         auth_check();
         $this->module_folder = $this->uri->segment(1);
         $this->module = $this->uri->segment(2);
-        $this->module_table_prefix = 'si_clients_';
-        $this->module_table = 'si_clients';
+        $this->module_table_prefix = 'si_transactions_detail';
+        $this->module_table = 'si_transactions_detail';
         $this->view_data['_controller_path'] = base_url() . $this->module_folder . '/' . $this->module . '/';
-        $this->view_data['laptop_devices'] = ['NL' => 'No Laptop', 'OL' => 'Only Laptop', 'WL' => 'With Laptop'];
-        $this->view_data['reg_types'] = ['O' => 'Online', 'H' => 'HLock'];
-        $this->view_data['lan_types'] = ['Decl Without Srv', 'Decl With Srv', 'Lan'];
-        $this->load->model($this->module_folder . '/ClientMasterModel', 'ex');
+        $this->load->model($this->module_folder . '/TransactionsDetailModel', 'ex');
     }
 
     /**
@@ -34,12 +30,7 @@ class ClientMaster extends CI_Controller
     {
         $this->view_data['_breadcrumb_heading'] = ucwords(str_replace('-', ' ', $this->uri->segment(1)));
         $this->view_data['_view_title'] = ucwords(str_replace('-', ' ', $this->uri->segment(2)));
-        $this->view_data['states'] = $this->ex->query("select si_state_id,name from si_state where status='A' order by name");
-        $this->view_data['users'] = $this->ex->query("select si_admin_id,name from si_admin where status='A' order by name");
-        $this->view_data['products'] = $this->ex->query("select si_product_id,p_name from si_product where status='A' order by p_name");
-        $this->view_data['for_years'] = $this->ex->query("select si_for_year_id,yearname from si_for_year where status='A' order by yearname DESC");
-        $this->view_data['gstkeys'] = $this->ex->query("select si_gstkey_id,gstkey from si_gstkey where status='A' order by gstkey");
-        
+
         $this->load->view($this->module_folder . '/' . $this->module, $this->view_data);
     }
 
@@ -52,36 +43,68 @@ class ClientMaster extends CI_Controller
 
         $columns = array(
             // datatable column index  => database column name
-            0 => 'si_clients_id',
-            1 => 'contact_person',
-            2 => 'firm_name',
-            3 => 'registed_mobile',
-            4 => 'register_email',
-            5 => 'created_at',
-            6 => 'updated_at'
+            0 => $this->module_table_prefix . '_id',
+            1 => 'cd.contact_person',
+            2 => 'p_name',
+            3 => 'serial_no',
+            4 => 'category_id',
+            5 => 'for_year',
+            6 => 'amount',
+            7 => 'costamount',
+            8 => 'taxamount',
+            9 => 'new_lan',
+            10 => 'total_lan_cost_amount',
+            11 => 'billnumber',
+            12 => 'payment_type',
+            13 => 'billremarks',
+            14 => 'transaction_date',
+            15 => 'updated_at',
         );
 
-        $sql = "select si_clients_id,contact_person,firm_name,registed_mobile,register_email,created_at,updated_at,status from si_clients where status IN ('A', 'D')";
+        $sql = "SELECT
+            cd.contact_person,
+            cp.serial_no,
+            cp.si_product_id,
+            td.si_transactions_detail_id,
+            td.p_name,
+            td.category_id,
+            td.for_year,
+            td.amount,
+            td.costamount,
+            td.taxamount,
+            td.new_lan,
+            td.total_lan_cost_amount,
+            td.billnumber,
+            td.payment_type,
+            td.billremarks,
+            td.transaction_date,
+            td.status
+        FROM " . $this->module_table . " as td 
+        inner join si_clients as cd on cd.si_clients_id=td.si_clients_id 
+        inner join si_clients_details as cp on cp.si_clients_details_id=td.si_clients_details_id 
+        where td.status IN ('A', 'D')";
         $query = $this->ex->query($sql);
 
         $totalData = count($query);
 
-
         if (!empty(trim($requestData['search']['value']))) {   // if there is a search parameter, $requestData['search']['value'] contains search parameter
             $searchString = "'%" . str_replace(",", "','", trim($requestData['search']['value'])) . "%'"; //wrapping qoutation
-            $sql .= " and ( contact_person  LIKE " . $searchString;
-            $sql .= " or registed_mobile  LIKE " . $searchString;
-            $sql .= " or register_email  LIKE " . $searchString;
-            $sql .= " or firm_name  LIKE " . $searchString . ")";
+            $sql .= " AND ( cd.contact_person LIKE '" . $searchString . "%' ";
+            $sql .= " OR p_name LIKE '" . $searchString . "%' ";
+            $sql .= " OR cp.serial_no LIKE '" . $searchString . "%' ";
+            $sql .= " OR td.amount LIKE '" . $searchString . "%' ";
+            $sql .= " OR td.for_year LIKE '" . $searchString . "%' ";
+            $sql .= " OR td.payment_type LIKE '" . $searchString . "%' ";
+            $sql .= " OR td.billremarks LIKE '" . $searchString . "%' ";
+            $sql .= " OR td.created_at LIKE '" . $searchString . "%' )";
         }
         $query = $this->ex->query($sql);
 
         $totalFiltered = count($query); // when there is a search parameter then we have to modify total number filtered rows as per search result.
 
-
         $sql .= " ORDER BY " . $columns[$requestData['order'][0]['column']] . "   " . $requestData['order'][0]['dir'] . " LIMIT " . $requestData['start'] . " ," . $requestData['length'] . "   ";  // adding length
         $query = $this->ex->query($sql);
-
+        
         $data = array();
 
         $cnts = $requestData['start'] + 1;
@@ -96,20 +119,49 @@ class ClientMaster extends CI_Controller
             }
 
             $action = '';
-            $action = "<a class='change-status m-1' data-url='" . $this->view_data['_controller_path'] . "change_status' data-id='" . $row["si_clients_id"] . "' data-module='" . $this->module . "' data-status='" . $stts . "'><i class='btn btn-sm btn-rounded " . $icon . "' aria-hidden='true'></i></a>";
-            $action .= "<a data-modal='showModal' data-url='" . $this->view_data['_controller_path'] . "edit/" . $row["si_clients_id"] . "' class='edit-row me-1'><i class='btn btn-sm btn-rounded btn-outline-info ri-edit-line'></i></a>";
-            $action .= "<a data-url='" . $this->view_data['_controller_path'] . "delete' data-id='" . $row["si_clients_id"] . "' data-module='" . $this->module . "' class='delete-row'><i class='btn btn-outline-danger btn-sm btn-rounded ri-delete-bin-line'></i></a>";
+            $action = "<a class='change-status m-1' data-url='" . $this->view_data['_controller_path'] . "change_status' data-id='" . $row["si_transactions_detail_id"] . "' data-module='" . $this->module . "' data-status='" . $stts . "'><i class='btn btn-sm btn-rounded " . $icon . "' aria-hidden='true'></i></a>";
+            $action .= "<a data-modal='showModal' data-url='" . $this->view_data['_controller_path'] . "edit/" . $row["si_transactions_detail_id"] . "' class='edit-row me-1'><i class='btn btn-sm btn-rounded btn-outline-info ri-edit-line'></i></a>";
+            $action .= "<a data-url='" . $this->view_data['_controller_path'] . "delete' data-id='" . $row["si_transactions_detail_id"] . "' data-module='" . $this->module . "' class='delete-row'><i class='btn btn-outline-danger btn-sm btn-rounded ri-delete-bin-line'></i></a>";
+
+            if ($row['category_id'] == 0)
+                $fre_value = 'selected';
+            else if ($row['category_id'] == 1)
+                $fre_value = "Installation";
+            else if ($row['category_id'] == 2)
+                $fre_value = "Updatation";
+            else if ($row['category_id'] == 3)
+                $fre_value = "Lan";
+            else if ($row['category_id'] == 4)
+                $fre_value = "Conversion";
+            else
+                $fre_value = "not geting";
 
             $nestedData = array();
             $nestedData[] = $cnts++;
             $nestedData[] = to_title_case($row["contact_person"]);
-            $nestedData[] = $row["firm_name"];
-            $nestedData[] = $row['registed_mobile'];
-            $nestedData[] = $row['register_email'];
-            $nestedData[] = display_datetime($row["created_at"]);
-            $nestedData[] = display_datetime($row["updated_at"]);
+            $nestedData[] = $row["p_name"];
+            if (strlen($row['serial_no']) > 14) {
+                $nestedData[] =  chunk_split($row['serial_no'], 14, "\n");
+            } else {
+                $nestedData[] = $row['serial_no'];
+            }
+            $nestedData[] = $fre_value;
+            $nestedData[] = $row['for_year'];
+            $nestedData[] = $row['amount'];
+            $nestedData[] = $row['costamount'];
+            $nestedData[] = $row['taxamount'];
+            $nestedData[] = $row['new_lan'];
+            $nestedData[] = $row['total_lan_cost_amount'];
+            $nestedData[] = $row['billnumber'];
+            $nestedData[] = $row['payment_type'];
+            $nestedData[] = $row['billremarks'];
+            if ($row['transaction_date'] == NULL) {
+                $nestedData[] = '';
+            } else {
+                $nestedData[] = display_date($row["transaction_date"]);
+            }
             $nestedData[] = $action;
-            $nestedData['DT_RowId'] = "r" . $row['si_clients_id'];
+            $nestedData['DT_RowId'] = "r" . $row['si_transactions_detail_id'];
             $data[] = $nestedData;
         }
         $json_data = array(
@@ -142,22 +194,16 @@ class ClientMaster extends CI_Controller
         $action = ($id > 0) ? 'updated' : 'added';
         $_view_title = ucwords(str_replace('-', ' ', $this->uri->segment(2)));
 
+        $this->form_validation->set_rules('name', 'Name', 'trim|required');
         if ($action == 'added') {
-            $is_unique =  '|is_unique[si_clients.register_email]';
+            $is_unique =  '|is_unique[si_transactions_detail.name]';
         } else {
             $is_unique =  '';
         }
-
-        // contact information validation
-        $this->form_validation->set_rules('contact_person', 'Contact Person', 'trim|required');
-        $this->form_validation->set_rules('firm_name', 'Firm Name', 'trim|required');
-        $this->form_validation->set_rules('mobile', 'Mobile No', 'trim|required|min_length[10]|max_length[15]');
-        $this->form_validation->set_rules('email', 'Email Address', 'trim|required|valid_email' . $is_unique);
-        $this->form_validation->set_rules('address1', 'Address 1', 'trim|required');
-        $this->form_validation->set_rules('area', 'Area', 'trim|required');
-        $this->form_validation->set_rules('city', 'City', 'trim|required');
-        $this->form_validation->set_rules('state', 'State', 'trim|required');
-        $this->form_validation->set_rules('pincode', 'Pincode', 'trim|required|min_length[5]|max_length[8]');
+        $this->form_validation->set_rules('contact_person', 'TransactionsDetailname', 'trim|required' . $is_unique);
+        $this->form_validation->set_rules('firm_name', 'Phone', 'trim|required|min_length[10]|max_length[15]');
+        $this->form_validation->set_rules('register_email', 'Password', 'trim|required|min_length[3]|max_length[20]');
+        $this->form_validation->set_rules('registed_mobile', 'Role', 'trim|required');
 
         if (!$this->form_validation->run()) {
             $response['message'] = validation_errors(' ', ' ');
@@ -165,64 +211,20 @@ class ClientMaster extends CI_Controller
             exit;
         }
 
-        // add client info
+        // get data
         $qData = [
+            'name' => $this->input->post('name'),
             'contact_person' => $this->input->post('contact_person'),
             'firm_name' => $this->input->post('firm_name'),
-            'registed_mobile' => $this->input->post('mobile'),
-            'register_email' => $this->input->post('email'),
-            'address' => $this->input->post('address1'),
-            'address1' => $this->input->post('address2'),
-            'area' => $this->input->post('area'),
-            'city' => $this->input->post('city'),
-            'si_state_id' => $this->input->post('state'),
-            'pincode' => $this->input->post('pincode'),
-            'mobile1' => $this->input->post('mobile1'),
-            'mobile2' => $this->input->post('mobile2'),
-            'mobile3' => $this->input->post('mobile3'),
-            'phone1' => $this->input->post('phone1'),
-            'phone2' => $this->input->post('phone2'),
-            'gstin_no' => $this->input->post('gstno'),
+            'register_email' => $this->input->post('register_email'),
+            'registed_mobile' => $this->input->post('registed_mobile')
         ];
 
         $response['status'] = 'success';
         $response['message'] =  "{$_view_title} has been {$action} successfully.";
 
         if ($action == 'added') {
-            $client_id = $this->ex->add($this->module_table, $qData);
-
-            // client ID > 0 & add client product info
-            if ($client_id > 0) {
-                $pData = [
-                    'si_clients_id' => $client_id,
-                    'p_email' => $this->input->post('email'),
-                    'si_product_id' => $this->input->post('product'),
-                    'si_conversion_product_id' => $this->input->post('conversion_product'),
-                    'laptop' => $this->input->post('laptop'),
-                    'category_id' => $this->input->post('category'),
-                    'referby' => $this->input->post('referby'),
-                    'reg_type' => $this->input->post('reg_type'),
-                    'si_for_year_id' => $this->input->post('for_year'),
-                    'serial_no' => $this->input->post('serial_no'),
-                    'activation_code' => $this->input->post('activation_code'),
-                    'lan_type' => $this->input->post('srv_lan'),
-                    'total_lan' => $this->input->post('srv_lan_no'),
-                    'si_gstkey_id' => 0,
-                ];
-                $client_detail_id = $this->ex->add('si_clients_details', $pData);
-
-                // $client_detail_id > 0 & product purchase info
-                if ($client_detail_id > 0) {
-                    $product = array(
-                        'si_clients_details_id' => $client_detail_id,
-                        'purchase_year' => $this->input->post('for_year'),
-                        'purchase_date' => date('Y-m-d', strtotime($this->input->post('purchase_date'))),
-                        'renewal_date' => date('Y-m-d', strtotime($this->input->post('renewal_date'))),
-                    );
-
-                    $this->ex->add('si_product_purchase', $product);
-                }
-            }
+            $this->ex->add($this->module_table, $qData);
         } elseif ($action == 'updated') {
             $this->ex->update($this->module_table, [$this->module_table_prefix . "id" => $this->input->post('id')], $qData);
         }
@@ -249,7 +251,7 @@ class ClientMaster extends CI_Controller
         ];
 
         if ($id > 0) {
-            $sql = "select si_clients_id as id,contact_person,name,firm_name,register_email,registed_mobile from si_clients where status IN ('A', 'D') AND si_clients_id=$id";
+            $sql = "select si_transactions_detail_id as id,contact_person,name,firm_name,register_email,registed_mobile from si_transactions_detail where status IN ('A', 'D') AND si_transactions_detail_id=$id";
             $result = $this->ex->query($sql);
 
             if (!empty($result)) {
@@ -300,7 +302,7 @@ class ClientMaster extends CI_Controller
             'is_redirect' => false,
         ];
         if ($this->input->post('id')) {
-            $res = $this->ex->update($this->module_table, ['si_clients_id' => $this->input->post('id')], ['status' => 'B']);
+            $res = $this->ex->update($this->module_table, ['si_transactions_detail_id' => $this->input->post('id')], ['status' => 'Y']);
             if ($res) {
                 $response['status'] = true;
                 $response['message'] = "{$_view_title} has been deleted successfully.";
@@ -321,7 +323,7 @@ class ClientMaster extends CI_Controller
             'is_redirect' => false,
         ];
         if ($this->input->post('id')) {
-            $res = $this->ex->update($this->module_table, ['si_clients_id' => $this->input->post('id')], ['status' => $this->input->post('status')]);
+            $res = $this->ex->update($this->module_table, ['si_transactions_detail_id' => $this->input->post('id')], ['status' => $this->input->post('status')]);
             if ($res) {
                 $response['status'] = true;
                 $response['message'] = "{$_view_title} has been changed successfully.";

@@ -20,7 +20,6 @@ class ClientView extends CI_Controller
         $this->module_table_prefix = 'si_clients_';
         $this->module_table = 'si_clients';
         $this->view_data['_controller_path'] = base_url() . $this->module_folder . '/' . $this->module . '/';
-        $this->view_data['registed_mobile'] = ['SA' => 'Admin', 'TL' => 'Team Leader', 'A' => 'Staff'];
         $this->load->model($this->module_folder . '/ClientViewModel', 'ex');
     }
 
@@ -32,7 +31,7 @@ class ClientView extends CI_Controller
     {
         $this->view_data['_breadcrumb_heading'] = ucwords(str_replace('-', ' ', $this->uri->segment(1)));
         $this->view_data['_view_title'] = ucwords(str_replace('-', ' ', $this->uri->segment(2)));
-
+        
         $this->load->view($this->module_folder . '/' . $this->module, $this->view_data);
     }
 

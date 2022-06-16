@@ -55,7 +55,7 @@
                                     <div class="row g-4 mb-0">
                                         <div class="col-sm-auto">
                                             <div>
-                                                <h4 class="card-title mb-0">Listing</h4>
+                                                <h4 class="card-title mb-0">List</h4>
                                             </div>
                                         </div>
                                         <div class="col-sm">

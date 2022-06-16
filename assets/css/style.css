@@ -12,3 +12,13 @@ span.me-3.rounded-circle.avatar-sm.p-2.bg-light {
 .page-content.listing {
     padding-bottom: 0;
 }
+
+.form-label {
+    margin-bottom: 0.2rem;
+}
+
+@media (min-width: 768px) {
+    .row>* {
+        --vz-gutter-y: 0.5rem;
+    }
+}
