@@ -71,13 +71,10 @@
                                         <table id="example" class="stripe row-border order-column nowrap" style="width:100%">
                                             <thead>
                                                 <tr>
-                                                    <th>#</th>
                                                     <th>Customer Name</th>
                                                     <th>Firm Name</th>
                                                     <th>Mobile No.</th>
                                                     <th>Email</th>
-                                                    <th>Created Date</th>
-                                                    <th>Updated Date</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
@@ -209,7 +206,6 @@
                         <hr class="my-4 text-muted">
                         <div>
                             <h5>Contact Info</h5>
-                            <p class="text-muted">Fill all mandatory information below</p>
                         </div>
                         <div class="row">
                             <div class="col-md-2">
@@ -244,25 +240,12 @@
                         </div>
                         <div class="row">
                             <div class="col-md-2">
-                                <label for="referby-field" class="form-label required">Referred By:</label>
-                                <select class="form-control form-control-sm" name="referby" id="referby-field">
-                                    <option value="">Admin</option>
-                                    <?php
-                                    foreach ($users as $uKey => $user) {
-                                    ?>
-                                        <option value="<?= $user['si_admin_id'] ?>"><?= $user['name'] ?></option>
-                                    <?php
-                                    }
-                                    ?>
-                                </select>
-                                <div class="invalid-feedback">
-                                    Please select refer by.
-                                </div>
-                            </div>
-                            <div class="col-md-2">
                                 <label for="category-field" class="form-label">Type:</label>
-                                <select class="form-control form-control-sm" name="category" id="category-field">
+                                <select class="form-control form-control-sm" name="category" id="category-field" data-defval="1" data-event="change">
                                     <option value="1">Installation</option>
+                                    <option value="2" class="hide-me d-none">Updatation</option>
+                                    <option value="3" class="hide-me d-none">Lan</option>
+                                    <option value="4" class="hide-me d-none">Conversion</option>
                                 </select>
                                 <div class="invalid-feedback">
                                     Please select type.
@@ -270,8 +253,8 @@
                             </div>
                             <div class="col-md-2">
                                 <label for="product-field" class="form-label">Product:</label>
-                                <select class="form-control form-control-sm" name="product" id="product-field">
-                                    <option value="">--- Select Product ---</option>
+                                <select class="form-control form-control-sm" name="product" id="product-field" data-defval="0">
+                                    <option value="0">--- Select Product ---</option>
                                     <?php
                                     foreach ($products as $pKey => $product) {
                                     ?>
@@ -285,8 +268,24 @@
                                 </div>
                             </div>
                             <div class="col-md-2">
+                                <label for="referby-field" class="form-label required">Referred By:</label>
+                                <select class="form-control form-control-sm" name="referby" id="referby-field" data-defval="Admin">
+                                    <option value="Admin">Admin</option>
+                                    <?php
+                                    foreach ($users as $uKey => $user) {
+                                    ?>
+                                        <option value="<?= $user['si_admin_id'] ?>"><?= $user['name'] ?></option>
+                                    <?php
+                                    }
+                                    ?>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please select refer by.
+                                </div>
+                            </div>
+                            <div class="col-md-2">
                                 <label for="conversion_product-field" class="form-label">Conversion Product:</label>
-                                <select class="form-control form-control-sm" name="conversion_product" id="conversion_product-field">
+                                <select class="form-control form-control-sm" name="conversion_product" id="conversion_product-field" data-defval="0">
                                     <option value="0">Conversion Product</option>
                                 </select>
                                 <div class="invalid-feedback">
@@ -295,7 +294,7 @@
                             </div>
                             <div class="col-md-2">
                                 <label for="laptop-field" class="form-label">Laptop Device:</label>
-                                <select class="form-control form-control-sm" name="laptop" id="laptop-field">
+                                <select class="form-control form-control-sm" name="laptop" id="laptop-field" data-defval="NL">
                                     <?php
                                     foreach ($laptop_devices as $lKey => $ld) {
                                     ?>
@@ -310,7 +309,7 @@
                             </div>
                             <div class="col-md-2">
                                 <label for="reg_type-field" class="form-label">Reg. Type:</label>
-                                <select class="form-control form-control-sm" name="reg_type" id="reg_type-field">
+                                <select class="form-control form-control-sm" name="reg_type" id="reg_type-field" data-defval="O">
                                     <?php
                                     foreach ($reg_types as $rKey => $rt) {
                                     ?>
@@ -325,7 +324,7 @@
                             </div>
                             <div class="col-md-2">
                                 <label for="for_year-field" class="form-label">For Year:</label>
-                                <select class="form-control form-control-sm" name="for_year" id="for_year-field">
+                                <select class="form-control form-control-sm" name="for_year" id="for_year-field" data-defval="<?= $for_years[0]['si_for_year_id'] ?>">
                                     <?php
                                     foreach ($for_years as $fKey => $fy) {
                                     ?>
@@ -356,7 +355,7 @@
                             </div>
                             <div class="col-md-3">
                                 <label for="srv_lan-field" class="form-label">Srv/Lan:</label>
-                                <select class="form-control form-control-sm" name="srv_lan" id="srv_lan-field">
+                                <select class="form-control form-control-sm" name="srv_lan" id="srv_lan-field" data-defval="0" data-event="change">
                                     <?php
                                     foreach ($lan_types as $lKey => $lt) {
                                     ?>
@@ -366,17 +365,17 @@
                                     ?>
                                 </select>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-2" style="display: none;">
                                 <label for="srv_lan_no-field" class="form-label">Srv/Lan No.:</label>
                                 <input type="text" name="srv_lan_no" id="srv_lan_no-field" class="form-control form-control-sm" placeholder="Enter Srv/Lan No." />
                             </div>
                             <div class="col-md-4">
-                                <input class="form-check-input" type="checkbox" id="change_email-field" name="change_email" value="1">
+                                <input class="form-check-input" type="checkbox" id="change_email-field" name="change_email" value="1" data-def-check="false" data-event="change">
                                 <label class="form-check-label me-2" for="change_email-field">
                                     Change Email
                                 </label>
-                                <a href="<?= base_url() ?>assets/pdf/RequestForEmailidChangeForm.pdf" class="badge badge-outline-primary ms-1" target="_blank" title="View & Download PDF"><i class="ri-file-ppt-line label-icon align-middle fs-16 me-2"></i>View & Download</a>
-                                <div class="row">
+                                <a href="<?= base_url() ?>assets/pdf/RequestForEmailidChangeForm.pdf" class="badge badge-outline-primary ms-1 change-email d-none" target="_blank" title="View & Download PDF"><i class="ri-file-ppt-line label-icon align-middle fs-16 me-2"></i>View & Download</a>
+                                <div class="row change-email d-none">
                                     <div class="col-md-4">
                                         <label class="col-form-label">Upload Form:</label>
                                     </div>
@@ -402,6 +401,37 @@
     <?php $this->load->view('layouts/template/footerLinks'); ?>
 
     <script src="<?= base_url() ?>assets/js/pages/form-validation.init.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).on('change', '#category-field', function(){
+            var cVal = parseInt($(this).val());
+            if (cVal === 1) {
+                $("#referby-field").parent().show();
+                $("#product-field > option.phide").removeClass('d-none');
+            } else {
+                $("#referby-field").parent().hide();
+                $("#product-field > option.phide").addClass('d-none');
+            }
+        });
+        $(document).on('change', '#srv_lan-field', function(){
+            var cVal = parseInt($(this).val());
+            if (cVal === 0) {
+                $("#srv_lan_no-field").parent().hide();
+                $("#srv_lan_no-field").val('');
+            } else {
+                $("#srv_lan_no-field").parent().show();
+                $("#srv_lan_no-field").val(0);
+            }
+        });
+        $(document).on('change', '#change_email-field', function(){
+            if ($(this).prop('checked') == true) {                
+                $(".change-email").removeClass('d-none');
+            } else {
+                $(".change-email").addClass('d-none');
+            }
+        });
+    </script>
 
 </body>
 

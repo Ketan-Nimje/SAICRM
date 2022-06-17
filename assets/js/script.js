@@ -128,14 +128,39 @@ $(document).on('click', '.edit-row', function (e) {
                     } else if (ele.type == 'multi-select') {
                         var op_arr = res.data[ele.name].split(',');
                         $('select[name="' + ele.name + '[]"]').val(op_arr);
+                    } else if (ele.type == 'visible-select-option') {
+                        $('select[name=' + ele.name + '] > option').each(function(){
+                            let cVal = $(this).val();
+
+                            if (res.data[ele.name] !== null) {
+                                let sIds = res.data[ele.name].split(',');
+                                if ($.inArray(cVal, sIds) !== -1) {                                
+                                    $(this).removeClass('phide d-none');
+                                } else {
+                                    $(this).addClass('phide d-none');
+                                }
+                            } else {
+                                $(this).addClass('phide d-none');
+                            }
+                        });
+                        if (typeof ele.event !== 'undefined') {
+                            $(ele.type + '[name=' + ele.name + ']').trigger(ele.event);
+                        }
                     } else {
                         $(ele.type + '[name=' + ele.name + ']').val(res.data[ele.name]);
+                        if (typeof ele.event !== 'undefined') {
+                            $(ele.type + '[name=' + ele.name + ']').trigger(ele.event);
+                        }
                     }
                     if ($(".categories-dropdown").length > 0 && ele.name == 'parent_id') {
                         $(".categories-dropdown").parent().hide();
                     } else if ($(".categories-dropdown").length > 0 && ele.name == 'sai_category_id') {
                         getCategories(res.data.sai_category_id, 1);
-                    }                       
+                    }
+
+                    if ($(document).find('.hide-me.d-none').length > 0) {
+                        $(document).find('.hide-me.d-none').removeClass('d-none');
+                    }
                 }
 
             } else {
@@ -150,7 +175,7 @@ $(document).on('click', '.edit-row', function (e) {
 });
 
 $('#showModal').on('shown.bs.modal', function () {
-    if ($("#view-content").length == 0 && $('.editor').length == 0) return;
+    if ($("#view-content").length == 0 && $('.editor').length == 0 && $("input[type=checkbox]").length == 0) return;
     if ($('.editor').length > 0) {
         var idx = 0;
         $('.editor').each(function () {
@@ -162,10 +187,19 @@ $('#showModal').on('shown.bs.modal', function () {
             idx++;
         })
     } else if ($("#editor-field").length > 0) {
-
         var html = $("#view-content").html();
         CKEDITOR.instances['editor-field'].setData(html);
-    }
+    }    
+
+    $("input[type=checkbox]").each(function(){
+        var def_check = $(this).data('def-check');
+        var event_name = $(this).data('event');
+        $(this).prop('checked', def_check);
+
+        if (typeof event_name !== 'undefined') {
+            $(this).trigger(event_name);
+        }
+    });
 });
 
 $(document).on('click', '.create-btn', function () {
@@ -183,6 +217,16 @@ $(document).on('click', '.create-btn', function () {
     } else {
         $("#" + modal_id + " input,#" + modal_id + " select,#" + modal_id + " textarea,#" + modal_id + " file").val('');
     }
+
+    $("#" + modal_id + " select").each(function(){
+        var def_val = $(this).data('defval');
+        var event_name = $(this).data('event');
+        $(this).val(def_val);
+
+        if (typeof event_name !== 'undefined') {
+            $(this).trigger(event_name);
+        }
+    });
     
     $("#image-preview, .image-preview").attr('src', window.location.origin+'/saiinfotech/assets/images/no-image.png');
     if ($("#" + modal_id + ' .editor').length > 0) {
@@ -197,6 +241,13 @@ $(document).on('click', '.create-btn', function () {
     if ($(".categories-dropdown").length > 0) {
         $(".categories-dropdown").parent().show();
         getCategories();
+    }
+    
+    if ($(document).find('.hide-me').length > 0) {
+        $(document).find('.hide-me').addClass('d-none');
+    }
+    if ($(document).find('.phide.d-none').length > 0) {
+        $(document).find('.phide.d-none').removeAttr('class');
     }
 });
 

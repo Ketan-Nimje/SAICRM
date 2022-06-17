@@ -61,7 +61,7 @@ class ClientMaster extends CI_Controller
             6 => 'updated_at'
         );
 
-        $sql = "select si_clients_id,contact_person,firm_name,registed_mobile,register_email,created_at,updated_at,status from si_clients where status IN ('A', 'D')";
+        $sql = "select si_clients_id,contact_person,firm_name,registed_mobile,register_email,status from si_clients where status IN ('A', 'D')";
         $query = $this->ex->query($sql);
 
         $totalData = count($query);
@@ -89,26 +89,34 @@ class ClientMaster extends CI_Controller
 
             if ($row['status'] == 'A') {
                 $stts = 'D';
+                $status = 'Deactive';
                 $icon = 'btn-outline-success ri-eye-line';
             } else {
                 $stts = 'A';
+                $status = 'Active';
                 $icon = 'btn-outline-warning ri-eye-off-line';
             }
 
             $action = '';
-            $action = "<a class='change-status m-1' data-url='" . $this->view_data['_controller_path'] . "change_status' data-id='" . $row["si_clients_id"] . "' data-module='" . $this->module . "' data-status='" . $stts . "'><i class='btn btn-sm btn-rounded " . $icon . "' aria-hidden='true'></i></a>";
-            $action .= "<a data-modal='showModal' data-url='" . $this->view_data['_controller_path'] . "edit/" . $row["si_clients_id"] . "' class='edit-row me-1'><i class='btn btn-sm btn-rounded btn-outline-info ri-edit-line'></i></a>";
-            $action .= "<a data-url='" . $this->view_data['_controller_path'] . "delete' data-id='" . $row["si_clients_id"] . "' data-module='" . $this->module . "' class='delete-row'><i class='btn btn-outline-danger btn-sm btn-rounded ri-delete-bin-line'></i></a>";
+            $action = "<li><a href='#' class='dropdown-item change-status m-1' data-url='" . $this->view_data['_controller_path'] . "change_status' data-id='" . $row["si_clients_id"] . "' data-module='" . $this->module . "' data-status='" . $stts . "'><i class='btn-sm " . $icon . "' aria-hidden='true'></i> Mark as ".$status."</a></li>";
+            $action .= "<li><a href='#' data-modal='showModal' data-url='" . $this->view_data['_controller_path'] . "edit/" . $row["si_clients_id"] . "' class='dropdown-item edit-row me-1'><i class='btn-sm btn-outline-info ri-edit-line'></i> Edit</a></li>";
+            $action .= "<li><a href='#' data-url='" . $this->view_data['_controller_path'] . "delete' data-id='" . $row["si_clients_id"] . "' data-module='" . $this->module . "' class='dropdown-item delete-row'><i class='btn-outline-danger btn-sm ri-delete-bin-line'></i> Delete</a></li>";
+
+            $action_btn = '<div class="btn-group dropend">
+                <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Action
+                </button>
+                <ul class="dropdown-menu">
+                    '. $action .'
+                </ul>
+            </div>';
 
             $nestedData = array();
-            $nestedData[] = $cnts++;
             $nestedData[] = to_title_case($row["contact_person"]);
             $nestedData[] = $row["firm_name"];
             $nestedData[] = $row['registed_mobile'];
             $nestedData[] = $row['register_email'];
-            $nestedData[] = display_datetime($row["created_at"]);
-            $nestedData[] = display_datetime($row["updated_at"]);
-            $nestedData[] = $action;
+            $nestedData[] = $action_btn;
             $nestedData['DT_RowId'] = "r" . $row['si_clients_id'];
             $data[] = $nestedData;
         }
@@ -188,43 +196,45 @@ class ClientMaster extends CI_Controller
         $response['status'] = 'success';
         $response['message'] =  "{$_view_title} has been {$action} successfully.";
 
+        $client_id = 0;
         if ($action == 'added') {
-            $client_id = $this->ex->add($this->module_table, $qData);
-
-            // client ID > 0 & add client product info
-            if ($client_id > 0) {
-                $pData = [
-                    'si_clients_id' => $client_id,
-                    'p_email' => $this->input->post('email'),
-                    'si_product_id' => $this->input->post('product'),
-                    'si_conversion_product_id' => $this->input->post('conversion_product'),
-                    'laptop' => $this->input->post('laptop'),
-                    'category_id' => $this->input->post('category'),
-                    'referby' => $this->input->post('referby'),
-                    'reg_type' => $this->input->post('reg_type'),
-                    'si_for_year_id' => $this->input->post('for_year'),
-                    'serial_no' => $this->input->post('serial_no'),
-                    'activation_code' => $this->input->post('activation_code'),
-                    'lan_type' => $this->input->post('srv_lan'),
-                    'total_lan' => $this->input->post('srv_lan_no'),
-                    'si_gstkey_id' => 0,
-                ];
-                $client_detail_id = $this->ex->add('si_clients_details', $pData);
-
-                // $client_detail_id > 0 & product purchase info
-                if ($client_detail_id > 0) {
-                    $product = array(
-                        'si_clients_details_id' => $client_detail_id,
-                        'purchase_year' => $this->input->post('for_year'),
-                        'purchase_date' => date('Y-m-d', strtotime($this->input->post('purchase_date'))),
-                        'renewal_date' => date('Y-m-d', strtotime($this->input->post('renewal_date'))),
-                    );
-
-                    $this->ex->add('si_product_purchase', $product);
-                }
-            }
+            $client_id = $this->ex->add($this->module_table, $qData);            
         } elseif ($action == 'updated') {
             $this->ex->update($this->module_table, [$this->module_table_prefix . "id" => $this->input->post('id')], $qData);
+            $client_id = $this->input->post('id');
+        }
+
+        // client ID > 0 & add client product info
+        if ($client_id > 0 && in_array($action, ['added', 'updated'])) {
+            $pData = [
+                'si_clients_id' => $client_id,
+                'p_email' => $this->input->post('email'),
+                'si_product_id' => $this->input->post('product'),
+                'si_conversion_product_id' => $this->input->post('conversion_product'),
+                'laptop' => $this->input->post('laptop'),
+                'category_id' => $this->input->post('category'),
+                'referby' => $this->input->post('referby'),
+                'reg_type' => $this->input->post('reg_type'),
+                'si_for_year_id' => $this->input->post('for_year'),
+                'serial_no' => $this->input->post('serial_no'),
+                'activation_code' => $this->input->post('activation_code'),
+                'lan_type' => $this->input->post('srv_lan'),
+                'total_lan' => $this->input->post('srv_lan_no'),
+                'si_gstkey_id' => 0,
+            ];
+            $client_detail_id = $this->ex->add('si_clients_details', $pData);
+
+            // $client_detail_id > 0 & product purchase info
+            if ($client_detail_id > 0) {
+                $product = array(
+                    'si_clients_details_id' => $client_detail_id,
+                    'purchase_year' => $this->input->post('for_year'),
+                    'purchase_date' => date('Y-m-d', strtotime($this->input->post('purchase_date'))),
+                    'renewal_date' => date('Y-m-d', strtotime($this->input->post('renewal_date'))),
+                );
+
+                $this->ex->add('si_product_purchase', $product);
+            }
         }
 
         echo json_encode($response);
@@ -249,7 +259,28 @@ class ClientMaster extends CI_Controller
         ];
 
         if ($id > 0) {
-            $sql = "select si_clients_id as id,contact_person,name,firm_name,register_email,registed_mobile from si_clients where status IN ('A', 'D') AND si_clients_id=$id";
+            $sql = "select si_clients_id as id,
+            contact_person,
+            firm_name,
+            register_email as email,
+            registed_mobile as mobile,
+            address as address1,
+            address as address2,
+            area,
+            city,
+            si_state_id as state,
+            pincode,
+            mobile1,
+            mobile2,
+            mobile3,
+            phone1,
+            phone2,
+            gstin_no as gstno,
+            2 as category,
+            0 as srv_lan,
+            (SELECT GROUP_CONCAT(scd.si_product_id) FROM si_clients_details scd WHERE scd.si_clients_id = sc.si_clients_id AND status='A') as product
+            from si_clients sc
+            where status IN ('A', 'D') AND si_clients_id=$id";
             $result = $this->ex->query($sql);
 
             if (!empty($result)) {
@@ -257,10 +288,6 @@ class ClientMaster extends CI_Controller
                 $response['message'] = 'Record found';
                 $response['view_title'] = 'Update ' . ucwords(str_replace('-', ' ', $this->uri->segment(2)));
                 $response['form_element'] = [
-                    [
-                        'name' => 'name',
-                        'type' => 'input',
-                    ],
                     [
                         'name' => 'contact_person',
                         'type' => 'input',
@@ -270,16 +297,74 @@ class ClientMaster extends CI_Controller
                         'type' => 'input',
                     ],
                     [
-                        'name' => 'register_email',
+                        'name' => 'email',
                         'type' => 'input',
                     ],
                     [
-                        'name' => 'confirm_register_email',
+                        'name' => 'mobile',
                         'type' => 'input',
                     ],
                     [
-                        'name' => 'registed_mobile',
+                        'name' => 'address1',
+                        'type' => 'input',
+                    ],
+                    [
+                        'name' => 'address2',
+                        'type' => 'input',
+                    ],
+                    [
+                        'name' => 'area',
+                        'type' => 'input',
+                    ],
+                    [
+                        'name' => 'city',
+                        'type' => 'input',
+                    ],
+                    [
+                        'name' => 'state',
                         'type' => 'select',
+                    ],
+                    [
+                        'name' => 'pincode',
+                        'type' => 'input',
+                    ],
+                    [
+                        'name' => 'mobile1',
+                        'type' => 'input',
+                    ],
+                    [
+                        'name' => 'mobile2',
+                        'type' => 'input',
+                    ],
+                    [
+                        'name' => 'mobile3',
+                        'type' => 'input',
+                    ],
+                    [
+                        'name' => 'phone1',
+                        'type' => 'input',
+                    ],
+                    [
+                        'name' => 'phone2',
+                        'type' => 'input',
+                    ],
+                    [
+                        'name' => 'gstno',
+                        'type' => 'input',
+                    ],
+                    [
+                        'name' => 'category',
+                        'type' => 'select',
+                        'event' => 'change',
+                    ],
+                    [
+                        'name' => 'srv_lan',
+                        'type' => 'select',
+                        'event' => 'change',
+                    ],
+                    [
+                        'name' => 'product',
+                        'type' => 'visible-select-option',
                     ],
                 ];
                 $response['data'] = $result[0];
