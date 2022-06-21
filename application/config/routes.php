@@ -74,6 +74,7 @@ $route["{$folder}client-master/edit/(:num)"] = "{$folder}ClientMaster/edit/$1";
 $route["{$folder}client-master/show/(:num)"] = "{$folder}ClientMaster/show/$1";
 $route["{$folder}client-master/delete"] = "{$folder}ClientMaster/delete";
 $route["{$folder}client-master/change_status"] = "{$folder}ClientMaster/change_status";
+$route["{$folder}client-master/client-product/(:num)"] = "{$folder}ClientMaster/client_product/$1";
 
 $route["{$folder}client-view"] = "{$folder}ClientView/index";
 $route["{$folder}client-view/get_data"] = "{$folder}ClientView/get_data";

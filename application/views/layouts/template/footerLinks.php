@@ -76,7 +76,7 @@
         var page_module = $(this).data('module');
         page_module = page_module.replace('-', ' ');
         Swal.fire({
-            html: '<div class="mt-3"><lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon><div class="mt-4 pt-2 fs-15 mx-5"><h4>Are you Sure ?</h4><p class="text-muted mx-4 mb-0">Are you Sure You want to Delete this "' + page_module + '" ?</p></div></div>',
+            html: '<div class="mt-3"><lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon><div class="mt-4 pt-2 fs-15 mx-5"><h4>Are you Sure ?</h4></div></div>',
             showCancelButton: !0,
             confirmButtonClass: "btn btn-primary w-xs me-2 mb-1",
             confirmButtonText: "Yes, Delete It!",
@@ -129,7 +129,7 @@
         page_module = page_module.replace('-', ' ');
         Swal.fire({
             title: 'Are you Sure ?',
-            text: 'Are you Sure You want to change this "' + page_module + '" status ?',
+            text: 'Do you want to change this "' + page_module + '" status ?',
             icon: 'question',
             showCancelButton: !0,
             confirmButtonClass: "btn btn-primary w-xs me-2 mb-1",
@@ -168,13 +168,14 @@
                         }
                     }
                 })
-            } else {
-                Swal.fire(
-                    'Cancelled',
-                    'Your "' + page_module + '" is safe :)',
-                    'error'
-                )
             }
+            // else {
+            //     Swal.fire(
+            //         'Cancelled',
+            //         'Your "' + page_module + '" is safe :)',
+            //         'error'
+            //     )
+            // }
         })
     });
 </script>

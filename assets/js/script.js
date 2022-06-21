@@ -75,6 +75,7 @@ $(document).on('submit', '.form-submit', function (e) {
                 } else if (res.is_table) {
                     dataTable.draw();
                 }
+                $("#" + modal_id + ' form')[0].reset();
                 $("#" + modal_id).modal('hide');
             } else {
                 errorToast(res.message);

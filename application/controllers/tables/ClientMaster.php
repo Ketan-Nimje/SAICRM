@@ -101,6 +101,7 @@ class ClientMaster extends CI_Controller
             $action = "<li><a href='#' class='dropdown-item change-status m-1' data-url='" . $this->view_data['_controller_path'] . "change_status' data-id='" . $row["si_clients_id"] . "' data-module='" . $this->module . "' data-status='" . $stts . "'><i class='btn-sm " . $icon . "' aria-hidden='true'></i> Mark as ".$status."</a></li>";
             $action .= "<li><a href='#' data-modal='showModal' data-url='" . $this->view_data['_controller_path'] . "edit/" . $row["si_clients_id"] . "' class='dropdown-item edit-row me-1'><i class='btn-sm btn-outline-info ri-edit-line'></i> Edit</a></li>";
             $action .= "<li><a href='#' data-url='" . $this->view_data['_controller_path'] . "delete' data-id='" . $row["si_clients_id"] . "' data-module='" . $this->module . "' class='dropdown-item delete-row'><i class='btn-outline-danger btn-sm ri-delete-bin-line'></i> Delete</a></li>";
+            $action .= "<li><button type='button' data-id='" . $row["si_clients_id"] . "' class='dropdown-item client-product-row me-1' data-bs-toggle='modal' data-bs-target='#showProductModal'><i class='btn-sm btn-outline-secondary  ri-product-hunt-fill'></i> View Product</button></li>";
 
             $action_btn = '<div class="btn-group dropend">
                 <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -172,6 +173,19 @@ class ClientMaster extends CI_Controller
             echo json_encode($response);
             exit;
         }
+        
+        // file validation
+        $filename = '';
+        if (!empty($_FILES['change_email_form']['name'])) {
+            $fres = move_file('change_email_form', '/assetss/upload/files', $id, 'pdf');
+            if ($fres['status'] == 'fail') {
+                $response['message'] = $fres['message'];
+                echo json_encode($response);
+                exit;
+            } else {
+                $filename = $fres['message'];
+            }
+        }
 
         // add client info
         $qData = [
@@ -221,6 +235,7 @@ class ClientMaster extends CI_Controller
                 'lan_type' => $this->input->post('srv_lan'),
                 'total_lan' => $this->input->post('srv_lan_no'),
                 'si_gstkey_id' => 0,
+                'attach_file' => $filename,
             ];
             $client_detail_id = $this->ex->add('si_clients_details', $pData);
 
@@ -413,5 +428,124 @@ class ClientMaster extends CI_Controller
             }
         }
         echo json_encode($response);
+    }
+
+    /**
+     * Get client products by client id
+     */
+    function client_product($id = 0)
+    {
+        $requestData = $_REQUEST;
+
+        $columns = array(
+            // datatable column index  => database column name
+            0 => 'cd.si_clients_details_id',
+            1 => 'p.p_name',
+            2 => 'pp.purchase_year',
+            3 => 'pp.purchase_date',
+            4 => 'pp.renewal_date',
+            5 => 'cd.activation_code',
+            6 => 'cd.serial_no',
+            7 => 'cd.lan_type',
+            8 => 'cd.total_lan',
+            9 => 'cd.reg_type',
+            10 => 'cd.status',
+        );
+
+        $sql = "SELECT 
+                cd.si_clients_details_id,
+                cd.si_conversion_product_id,
+                fy.yearname,
+                p.p_name,
+                pp.purchase_year,
+                pp.purchase_date,
+                pp.renewal_date,
+                cd.activation_code,
+                cd.serial_no,
+                cd.lan_type,
+                cd.total_lan,
+                cd.reg_type,
+                cd.status,
+                cd.attach_file
+            FROM si_clients_details AS cd
+            INNER JOIN si_product AS p ON (p.si_product_id = cd.si_product_id)
+            INNER JOIN si_product_purchase AS pp ON (pp.si_clients_details_id = cd.si_clients_details_id)
+            INNER JOIN si_for_year AS fy ON (pp.purchase_year = fy.si_for_year_id)
+            WHERE cd.si_clients_id = {$id} AND cd.status IN ('A', 'D')";
+        $query = $this->ex->query($sql);
+
+        $totalData = count($query);
+
+
+        if (!empty(trim($requestData['search']['value']))) {   // if there is a search parameter, $requestData['search']['value'] contains search parameter
+            $searchString = "'%" . str_replace(",", "','", trim($requestData['search']['value'])) . "%'"; //wrapping qoutation
+            $sql .= " and ( p.p_name  LIKE " . $searchString;
+            $sql .= " or pp.purchase_year  LIKE " . $searchString;
+            $sql .= " or cd.activation_code  LIKE " . $searchString;
+            $sql .= " or cd.serial_no  LIKE " . $searchString;
+            $sql .= " or cd.lan_type  LIKE " . $searchString;
+            $sql .= " or cd.total_lan  LIKE " . $searchString;
+            $sql .= " or cd.reg_type  LIKE " . $searchString . ")";
+        }
+        $query = $this->ex->query($sql);
+
+        $totalFiltered = count($query); // when there is a search parameter then we have to modify total number filtered rows as per search result.
+
+
+        $sql .= " ORDER BY " . $columns[$requestData['order'][0]['column']] . "   " . $requestData['order'][0]['dir'] . " LIMIT " . $requestData['start'] . " ," . $requestData['length'] . "   ";  // adding length
+        $query = $this->ex->query($sql);
+
+        $data = array();
+
+        $cnts = $requestData['start'] + 1;
+        foreach ($query as $row) {
+
+            if ($row['status'] == 'A') {
+                $stts = 'D';
+                $status = 'Deactive';
+                $icon = 'btn-outline-success ri-eye-line';
+            } else {
+                $stts = 'A';
+                $status = 'Active';
+                $icon = 'btn-outline-warning ri-eye-off-line';
+            }
+
+            $action = '';
+            $action = "<li><a href='#' class='dropdown-item change-status m-1' data-url='" . $this->view_data['_controller_path'] . "change_status' data-id='" . $row["si_clients_details_id"] . "' data-module='" . $this->module . "' data-status='" . $stts . "'><i class='btn-sm " . $icon . "' aria-hidden='true'></i> Mark as ".$status."</a></li>";
+            $action .= "<li><a href='#' data-modal='showModal' data-url='" . $this->view_data['_controller_path'] . "edit/" . $row["si_clients_details_id"] . "' class='dropdown-item edit-row me-1'><i class='btn-sm btn-outline-info ri-edit-line'></i> Edit</a></li>";
+            $action .= "<li><a href='#' data-url='" . $this->view_data['_controller_path'] . "delete' data-id='" . $row["si_clients_details_id"] . "' data-module='" . $this->module . "' class='dropdown-item delete-row'><i class='btn-outline-danger btn-sm ri-delete-bin-line'></i> Delete</a></li>";
+            
+            $action_btn = '<div class="btn-group dropend">
+                <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Action
+                </button>
+                <ul class="dropdown-menu">
+                    '. $action .'
+                </ul>
+            </div>';
+
+            $nestedData = array();
+            $nestedData[] = to_title_case($row["p_name"]);
+            $nestedData[] = $row["yearname"];
+            $nestedData[] = $row['activation_code'];
+            $nestedData[] = $row['serial_no'];
+            $nestedData[] = display_date($row["purchase_date"]);
+            $nestedData[] = display_date($row["renewal_date"]);
+            $nestedData[] = $row["lan_type"];
+            $nestedData[] = $row["total_lan"];
+            $nestedData[] = $row["reg_type"];
+            $nestedData[] = $row["attach_file"];
+            $nestedData[] = $action_btn;
+            $nestedData['DT_RowId'] = "r" . $row['si_clients_details_id'];
+            $data[] = $nestedData;
+        }
+        $json_data = array(
+            "draw" => intval($requestData['draw']), // for every request/draw by clientside , they send a number as a parameter, when they recieve a response/data they first check the draw number, so we are sending same number in draw.
+            "recordsTotal" => intval($totalData), // total number of records
+            "recordsFiltered" => intval($totalFiltered), // total number of records after searching, if there is no searching then totalFiltered = totalData
+            "data" => $data,   // total data array
+            "sql" => $sql   // query
+        );
+        echo json_encode($json_data);
     }
 }

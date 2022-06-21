@@ -76,7 +76,7 @@ if (!function_exists('display_date')) {
 
     function display_date($udate) {
         if ($udate != '' && $udate != '0000-00-00') {
-            return date('d M Y', strtotime($udate));
+            return date('d M, Y', strtotime($udate));
         } else {
             return "-";
         }
@@ -152,14 +152,19 @@ if (!function_exists('get_inquiry_status')) {
 // file upload code
 if (!function_exists('move_file')) {
 
-    function move_file($post_name = 'image', $path_name = 'image', $new_name = 'image') {
+    function move_file($post_name = 'image', $path_name = 'image', $new_name = 'image', $allowed_type = 'jpg|jpeg|png|gif') {
         $ci = &get_instance();
 
         $ci->load->library('upload');
-        $path = $_FILES['image']['name'];
+
+        if ($path_name != 'image') {
+            if (!is_dir(FCPATH.$path_name)) mkdir(FCPATH.$path_name, 0755, true);
+        }
+
+        $path = $_FILES[$post_name]['name'];
         $ext = pathinfo($path, PATHINFO_EXTENSION);
-        $config['upload_path'] = FCPATH . '/assets/Uploads/' . $path_name;
-        $config['allowed_types'] = 'jpg|jpeg|png|gif';
+        $config['upload_path'] = FCPATH . $path_name;
+        $config['allowed_types'] = $allowed_type;
         $config['max_size'] = '1024000'; // Can be set to particular file size , here it is 1 MB(1024 Kb)
         $config['file_name'] = strtolower($new_name) . "_" . time() . "." . $ext;
 

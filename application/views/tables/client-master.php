@@ -111,7 +111,7 @@
                     <h5 class="modal-title" id="exampleModalLabel">Add <?= $_view_title ?></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
                 </div>
-                <form data-modal="showModal" method="POST" action="<?= $_controller_path ?>add_update" class="needs-validation form-submit" novalidate>
+                <form data-modal="showModal" method="POST" action="<?= $_controller_path ?>add_update" class="needs-validation form-submit" enctype="multipart/form-data" novalidate>
                     <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
                     <div class="modal-body">
                         <input type="hidden" name="id" value="0" id="id-field" class="form-control form-control-sm" placeholder="ID" required />
@@ -397,6 +397,45 @@
         </div>
     </div>
 
+    <div class="modal zoomIn" id="showProductModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-light p-3">
+                    <h5 class="modal-title" id="productModalLabel">View Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="table-fixed-header1">
+                        <table id="product-rows" class="stripe row-border order-column nowrap" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Purc. Year</th>
+                                    <th>Activation Code</th>
+                                    <th>Serial #</th>
+                                    <th>Purc. Date</th>
+                                    <th>Renew. Date</th>
+                                    <th>Decl Srv</th>
+                                    <th>Lan</th>
+                                    <th>Reg. Type</th>
+                                    <th>File</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="hstack gap-2 justify-content-end">
+                        <button type="button" class="btn btn-sm btn-light btn-label waves-effect waves-light rounded-pill" data-bs-dismiss="modal"><i class="ri-close-line label-icon align-middle fs-16 me-2"></i> Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- include footer links -->
     <?php $this->load->view('layouts/template/footerLinks'); ?>
 
@@ -425,11 +464,47 @@
             }
         });
         $(document).on('change', '#change_email-field', function(){
-            if ($(this).prop('checked') == true) {                
+            if ($(this).prop('checked') == true) {
                 $(".change-email").removeClass('d-none');
             } else {
                 $(".change-email").addClass('d-none');
             }
+        });
+
+        $('#showProductModal').on('shown.bs.modal', function (event) {
+            var ele = event.relatedTarget;
+            var id = $(ele).data('id');
+            $('#product-rows').DataTable().destroy();
+
+            dataTable = $('#product-rows').DataTable({
+            destroy: true,
+            scrollY: 400,
+            scrollX: true,
+            scrollCollapse: true,
+            paging: true,
+            fixedColumns: {
+                left: 1,
+                right: 1
+            },
+            fixedHeader: {
+                header: true,
+                // footer: true
+            },
+            order: [
+                [0, "desc"]
+            ],
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "<?= $_controller_path ."client-product/" ?>"+id,
+                type: "get", // method  , by default get
+                dataType: 'json',
+            },
+            aoColumnDefs: [{
+                bSortable: false,
+                aTargets: [-1]
+            }]
+        });
         });
     </script>
 
