@@ -21,7 +21,7 @@ class ClientMaster extends CI_Controller
         $this->module_table = 'si_clients';
         $this->view_data['_controller_path'] = base_url() . $this->module_folder . '/' . $this->module . '/';
         $this->view_data['laptop_devices'] = ['NL' => 'No Laptop', 'OL' => 'Only Laptop', 'WL' => 'With Laptop'];
-        $this->view_data['reg_types'] = ['O' => 'Online', 'H' => 'HLock'];
+        $this->view_data['reg_types'] = ['O' => 'Online', 'H' => 'H Lock'];
         $this->view_data['lan_types'] = ['Decl Without Srv', 'Decl With Srv', 'Lan'];
         $this->load->model($this->module_folder . '/ClientMasterModel', 'ex');
     }
@@ -393,14 +393,15 @@ class ClientMaster extends CI_Controller
      */
     function delete()
     {
-        $_view_title = ucwords(str_replace('-', ' ', $this->uri->segment(2)));
+        $_view_title = $this->input->get('table') ? 'Product' : ucwords(str_replace('-', ' ', $this->uri->segment(2)));
         $response = [
             'status' => false,
             'message' => "{$_view_title} does not exist.",
             'is_redirect' => false,
         ];
         if ($this->input->post('id')) {
-            $res = $this->ex->update($this->module_table, ['si_clients_id' => $this->input->post('id')], ['status' => 'B']);
+            $table = $this->input->get('table') ? $this->input->get('table') : $this->module_table; 
+            $res = $this->ex->update($table, [$table.'_id' => $this->input->post('id')], ['status' => 'B']);
             if ($res) {
                 $response['status'] = true;
                 $response['message'] = "{$_view_title} has been deleted successfully.";
@@ -414,14 +415,15 @@ class ClientMaster extends CI_Controller
      */
     function change_status()
     {
-        $_view_title = ucwords(str_replace('-', ' ', $this->uri->segment(2)));
+        $_view_title = $this->input->get('table') ? 'Product' : ucwords(str_replace('-', ' ', $this->uri->segment(2)));
         $response = [
             'status' => false,
             'message' => "{$_view_title} does not exist.",
             'is_redirect' => false,
         ];
         if ($this->input->post('id')) {
-            $res = $this->ex->update($this->module_table, ['si_clients_id' => $this->input->post('id')], ['status' => $this->input->post('status')]);
+            $table = $this->input->get('table') ? $this->input->get('table') : $this->module_table; 
+            $res = $this->ex->update($table, [$table.'_id' => $this->input->post('id')], ['status' => $this->input->post('status')]);
             if ($res) {
                 $response['status'] = true;
                 $response['message'] = "{$_view_title} has been changed successfully.";
@@ -511,9 +513,9 @@ class ClientMaster extends CI_Controller
             }
 
             $action = '';
-            $action = "<li><a href='#' class='dropdown-item change-status m-1' data-url='" . $this->view_data['_controller_path'] . "change_status' data-id='" . $row["si_clients_details_id"] . "' data-module='" . $this->module . "' data-status='" . $stts . "'><i class='btn-sm " . $icon . "' aria-hidden='true'></i> Mark as ".$status."</a></li>";
-            $action .= "<li><a href='#' data-modal='showModal' data-url='" . $this->view_data['_controller_path'] . "edit/" . $row["si_clients_details_id"] . "' class='dropdown-item edit-row me-1'><i class='btn-sm btn-outline-info ri-edit-line'></i> Edit</a></li>";
-            $action .= "<li><a href='#' data-url='" . $this->view_data['_controller_path'] . "delete' data-id='" . $row["si_clients_details_id"] . "' data-module='" . $this->module . "' class='dropdown-item delete-row'><i class='btn-outline-danger btn-sm ri-delete-bin-line'></i> Delete</a></li>";
+            $action = "<li><a href='#' class='dropdown-item change-status m-1' data-url='" . $this->view_data['_controller_path'] . "change_status?table=si_clients_details' data-id='" . $row["si_clients_details_id"] . "' data-module='product' data-status='" . $stts . "'><i class='btn-sm " . $icon . "' aria-hidden='true'></i> Mark as ".$status."</a></li>";
+            $action .= "<li><a href='#' data-modal='showEditProductModal' data-url='" . $this->view_data['_controller_path'] . "edit-product/" . $row["si_clients_details_id"] . "' class='dropdown-item edit-row me-1'><i class='btn-sm btn-outline-info ri-edit-line'></i> Edit</a></li>";
+            $action .= "<li><a href='#' data-url='" . $this->view_data['_controller_path'] . "delete?table=si_clients_details' data-id='" . $row["si_clients_details_id"] . "' data-module='product' class='dropdown-item delete-row'><i class='btn-outline-danger btn-sm ri-delete-bin-line'></i> Delete</a></li>";
             
             $action_btn = '<div class="btn-group dropend">
                 <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -527,14 +529,12 @@ class ClientMaster extends CI_Controller
             $nestedData = array();
             $nestedData[] = to_title_case($row["p_name"]);
             $nestedData[] = $row["yearname"];
-            $nestedData[] = $row['activation_code'];
+            $nestedData[] = display_date($row["purchase_date"]) . '<br>'. display_date($row["renewal_date"]);
+            $nestedData[] = $row["lan_type"] . ' / '. $row["total_lan"];
+            $nestedData[] = '<span class="badge rounded-pill bg-'.($row["reg_type"] == 'O' ? 'success' : 'info').'">'.$this->view_data['reg_types'][$row["reg_type"]].'</span>';
             $nestedData[] = $row['serial_no'];
-            $nestedData[] = display_date($row["purchase_date"]);
-            $nestedData[] = display_date($row["renewal_date"]);
-            $nestedData[] = $row["lan_type"];
-            $nestedData[] = $row["total_lan"];
-            $nestedData[] = $row["reg_type"];
-            $nestedData[] = $row["attach_file"];
+            $nestedData[] = $row['activation_code'];
+            $nestedData[] = empty($row["attach_file"]) ? '--' : "<a href='" . base_url('assetss/upload/files/') . $row['attach_file'] . "' download>Download File</a>";
             $nestedData[] = $action_btn;
             $nestedData['DT_RowId'] = "r" . $row['si_clients_details_id'];
             $data[] = $nestedData;
@@ -547,5 +547,172 @@ class ClientMaster extends CI_Controller
             "sql" => $sql   // query
         );
         echo json_encode($json_data);
+    }
+
+    /**
+     * Display a record
+     */
+    function edit_product($id = 0)
+    {
+        $response = [
+            'status' => 'fail',
+            'message' => 'Record not found',
+            'data' => [],
+        ];
+
+        if ($id > 0) {
+            $sql = "select cd.si_clients_details_id as id,
+            cd.category_id as category,
+            cd.si_product_id as product,
+            cd.si_conversion_product_id as conversion_product,
+            cd.laptop,
+            cd.reg_type,
+            cd.si_for_year_id as for_year,
+            cd.serial_no,
+            cd.activation_code,
+            cd.lan_type as srv_lan,
+            cd.total_lan as srv_lan_no,
+            cd.referby,
+            pp.purchase_date,
+            pp.renewal_date
+            from si_clients_details cd
+            left join si_product_purchase pp on (cd.si_clients_details_id = pp.si_clients_details_id)
+            where cd.status IN ('A', 'D') AND cd.si_clients_details_id=$id";
+            $result = $this->ex->query($sql);
+
+            if (!empty($result)) {
+                $response['status'] = 'success';
+                $response['message'] = 'Record found';
+                $response['view_title'] = 'Update Product';
+                $response['form_element'] = [
+                    [
+                        'name' => 'category',
+                        'type' => 'select',
+                    ],
+                    [
+                        'name' => 'product',
+                        'type' => 'select',
+                    ],
+                    [
+                        'name' => 'conversion_product',
+                        'type' => 'select',
+                    ],
+                    [
+                        'name' => 'laptop',
+                        'type' => 'select',
+                    ],
+                    [
+                        'name' => 'reg_type',
+                        'type' => 'select',
+                    ],
+                    [
+                        'name' => 'for_year',
+                        'type' => 'select',
+                    ],
+                    [
+                        'name' => 'serial_no',
+                        'type' => 'input',
+                    ],
+                    [
+                        'name' => 'activation_code',
+                        'type' => 'input',
+                    ],
+                    [
+                        'name' => 'srv_lan',
+                        'type' => 'select',
+                    ],
+                    [
+                        'name' => 'srv_lan_no',
+                        'type' => 'input',
+                    ],
+                    [
+                        'name' => 'purchase_date',
+                        'type' => 'input',
+                    ],
+                    [
+                        'name' => 'renewal_date',
+                        'type' => 'input',
+                    ],
+                    [
+                        'name' => 'referby',
+                        'type' => 'select',
+                    ],
+                ];
+                $response['data'] = $result[0];
+            }
+        }
+        echo json_encode($response);
+    }
+
+    /**
+     * Add or Update records
+     */
+    function add_update_product()
+    {
+        // response json
+        $response = [
+            'status' => 'fail',
+            'message' => '',
+            'is_redirect' => true,
+            'is_table' => false,
+            'url' => trim($this->view_data['_controller_path'], '/'),
+        ];
+
+        // load libraries and helpers
+        $this->load->library('form_validation');
+
+        $id = $this->input->post('id');
+        $action = ($id > 0) ? 'updated' : 'added';
+        $_view_title = 'Product';
+
+        // contact information validation
+        $this->form_validation->set_rules('product', 'Product', 'trim|required');
+        $this->form_validation->set_rules('serial_no', 'Serial No', 'trim|required');
+        $this->form_validation->set_rules('activation_code', 'Activation Code', 'trim|required');
+
+        if (!$this->form_validation->run()) {
+            $response['message'] = validation_errors(' ', ' ');
+            echo json_encode($response);
+            exit;
+        }
+
+        // add client info
+        $qData = [
+            'si_product_id' => $this->input->post('product'),
+            'si_conversion_product_id' => $this->input->post('conversion_product'),
+            'laptop' => $this->input->post('laptop'),
+            'category_id' => $this->input->post('category'),
+            'reg_type' => $this->input->post('reg_type'),
+            'si_for_year_id' => $this->input->post('for_year'),
+            'serial_no' => $this->input->post('serial_no'),
+            'activation_code' => $this->input->post('activation_code'),
+            'lan_type' => $this->input->post('srv_lan'),
+            'total_lan' => $this->input->post('srv_lan_no'),
+        ];
+
+        $response['status'] = 'success';
+        $response['message'] =  "{$_view_title} has been {$action} successfully.";
+
+        $client_detail_id = 0;
+        if ($action == 'added') {
+            $client_detail_id = $this->ex->add('si_clients_details', $qData);            
+        } elseif ($action == 'updated') {
+            $this->ex->update('si_clients_details', ["si_clients_details_id" => $this->input->post('id')], $qData);
+            $client_detail_id = $this->input->post('id');
+        }
+
+        // client ID > 0 & add client product info
+        if ($client_detail_id > 0 && in_array($action, ['added', 'updated'])) {
+            $product = array(
+                'si_clients_details_id' => $client_detail_id,
+                'purchase_year' => $this->input->post('for_year'),
+                'purchase_date' => date('Y-m-d', strtotime($this->input->post('purchase_date'))),
+                'renewal_date' => date('Y-m-d', strtotime($this->input->post('renewal_date'))),
+            );
+
+            $this->ex->update('si_product_purchase', ["si_clients_details_id" => $client_detail_id ], $product);
+        }
+
+        echo json_encode($response);
     }
 }

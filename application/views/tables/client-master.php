@@ -241,7 +241,7 @@
                         <div class="row">
                             <div class="col-md-2">
                                 <label for="category-field" class="form-label">Type:</label>
-                                <select class="form-control form-control-sm" name="category" id="category-field" data-defval="1" data-event="change">
+                                <select class="form-control form-control-sm category-field" name="category" id="category-field" data-defval="1" data-event="change">
                                     <option value="1">Installation</option>
                                     <option value="2" class="hide-me d-none">Updatation</option>
                                     <option value="3" class="hide-me d-none">Lan</option>
@@ -274,7 +274,7 @@
                                     <?php
                                     foreach ($users as $uKey => $user) {
                                     ?>
-                                        <option value="<?= $user['si_admin_id'] ?>"><?= $user['name'] ?></option>
+                                        <option value="<?= $user['name'] ?>"><?= $user['name'] ?></option>
                                     <?php
                                     }
                                     ?>
@@ -355,7 +355,7 @@
                             </div>
                             <div class="col-md-3">
                                 <label for="srv_lan-field" class="form-label">Srv/Lan:</label>
-                                <select class="form-control form-control-sm" name="srv_lan" id="srv_lan-field" data-defval="0" data-event="change">
+                                <select class="form-control form-control-sm srv_lan-field" name="srv_lan" id="srv_lan-field" data-defval="0" data-event="change">
                                     <?php
                                     foreach ($lan_types as $lKey => $lt) {
                                     ?>
@@ -367,7 +367,7 @@
                             </div>
                             <div class="col-md-2" style="display: none;">
                                 <label for="srv_lan_no-field" class="form-label">Srv/Lan No.:</label>
-                                <input type="text" name="srv_lan_no" id="srv_lan_no-field" class="form-control form-control-sm" placeholder="Enter Srv/Lan No." />
+                                <input type="text" name="srv_lan_no" id="srv_lan_no-field" class="form-control form-control-sm srv_lan_no-field" placeholder="Enter Srv/Lan No." />
                             </div>
                             <div class="col-md-4">
                                 <input class="form-check-input" type="checkbox" id="change_email-field" name="change_email" value="1" data-def-check="false" data-event="change">
@@ -410,14 +410,16 @@
                             <thead>
                                 <tr>
                                     <th>Product Name</th>
-                                    <th>Purc. Year</th>
-                                    <th>Activation Code</th>
-                                    <th>Serial #</th>
-                                    <th>Purc. Date</th>
-                                    <th>Renew. Date</th>
-                                    <th>Decl Srv</th>
-                                    <th>Lan</th>
+                                    <th>Session</th>
+                                    <th>
+                                        Purc. Date
+                                        <br>
+                                        Renew. Date
+                                    </th>
+                                    <th>Decl Srv / Lan</th>
                                     <th>Reg. Type</th>
+                                    <th>Serial No</th>
+                                    <th>Activation Code</th>
                                     <th>File</th>
                                     <th>Action</th>
                                 </tr>
@@ -432,6 +434,158 @@
                         <button type="button" class="btn btn-sm btn-light btn-label waves-effect waves-light rounded-pill" data-bs-dismiss="modal"><i class="ri-close-line label-icon align-middle fs-16 me-2"></i> Close</button>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal zoomIn" id="showEditProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-light p-3">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
+                </div>
+                <form data-modal="showEditProductModal" method="POST" action="<?= $_controller_path ?>add_update_product" class="needs-validation form-submit" enctype="multipart/form-data" novalidate>
+                    <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
+                    <div class="modal-body">
+                        <input type="hidden" name="id" value="0" id="id-field" class="form-control form-control-sm" placeholder="ID" required />
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="category-field" class="form-label">Type:</label>
+                                <select class="form-control form-control-sm" name="category" id="category-field" data-defval="1">
+                                    <option value="1">Installation</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please select type.
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="product-field" class="form-label required">Product:</label>
+                                <select class="form-control form-control-sm" name="product" id="product-field" data-defval="0" required>
+                                    <option value="0">--- Select Product ---</option>
+                                    <?php
+                                    foreach ($products as $pKey => $product) {
+                                    ?>
+                                        <option value="<?= $product['si_product_id'] ?>"><?= $product['p_name'] ?></option>
+                                    <?php
+                                    }
+                                    ?>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please select product.
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="conversion_product-field" class="form-label">Conversion Product:</label>
+                                <select class="form-control form-control-sm" name="conversion_product" id="conversion_product-field" data-defval="0">
+                                    <option value="0">Conversion Product</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please select conversion product.
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="laptop-field" class="form-label">Laptop Device:</label>
+                                <select class="form-control form-control-sm" name="laptop" id="laptop-field" data-defval="NL">
+                                    <?php
+                                    foreach ($laptop_devices as $lKey => $ld) {
+                                    ?>
+                                        <option value="<?= $lKey ?>"><?= $ld ?></option>
+                                    <?php
+                                    }
+                                    ?>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please select laptop device.
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="reg_type-field" class="form-label">Reg. Type:</label>
+                                <select class="form-control form-control-sm" name="reg_type" id="reg_type-field" data-defval="O">
+                                    <?php
+                                    foreach ($reg_types as $rKey => $rt) {
+                                    ?>
+                                        <option value="<?= $rKey ?>"><?= $rt ?></option>
+                                    <?php
+                                    }
+                                    ?>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please select Reg. Type.
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="for_year-field" class="form-label">For Year:</label>
+                                <select class="form-control form-control-sm" name="for_year" id="for_year-field" data-defval="<?= $for_years[0]['si_for_year_id'] ?>">
+                                    <?php
+                                    foreach ($for_years as $fKey => $fy) {
+                                    ?>
+                                        <option value="<?= $fy['si_for_year_id'] ?>"><?= $fy['yearname'] ?></option>
+                                    <?php
+                                    }
+                                    ?>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please select for year.
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="serial_no-field" class="form-label required">Serial No./HLock No.:</label>
+                                <input type="text" name="serial_no" id="serial_no-field" class="form-control form-control-sm" placeholder="Enter Serial No./HLock No." required />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="activation_code-field" class="form-label required">Activation Code:</label>
+                                <input type="text" name="activation_code" id="activation_code-field" class="form-control form-control-sm" placeholder="Enter Activation Code" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="purchase_date-field" class="form-label">Purchase Date:</label>
+                                <input type="text" name="purchase_date" id="purchase_date-field" class="form-control form-control-sm" placeholder="Enter Purchase Date" />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="renewal_date-field" class="form-label">Renewal Date:</label>
+                                <input type="text" name="renewal_date" id="renewal_date-field" class="form-control form-control-sm" placeholder="Enter Renewal Date" />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="srv_lan-field" class="form-label">Srv/Lan:</label>
+                                <select class="form-control form-control-sm srv_lan-field" name="srv_lan" id="srv_lan-field" data-defval="0" data-event="change">
+                                    <?php
+                                    foreach ($lan_types as $lKey => $lt) {
+                                    ?>
+                                        <option value="<?= $lKey ?>"><?= $lt ?></option>
+                                    <?php
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="col-md-6" style="display: none;">
+                                <label for="srv_lan_no-field" class="form-label">Srv/Lan No.:</label>
+                                <input type="text" name="srv_lan_no" id="srv_lan_no-field" class="form-control form-control-sm srv_lan_no-field" placeholder="Enter Srv/Lan No." />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="referby-field" class="form-label">Referred By:</label>
+                                <select class="form-control form-control-sm" name="referby" id="referby-field" data-defval="Admin" disabled>
+                                    <option value="Admin">Admin</option>
+                                    <?php
+                                    foreach ($users as $uKey => $user) {
+                                    ?>
+                                        <option value="<?= $user['name'] ?>"><?= $user['name'] ?></option>
+                                    <?php
+                                    }
+                                    ?>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please select refer by.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="hstack gap-2 justify-content-end">
+                            <button type="button" class="btn btn-sm btn-light btn-label waves-effect waves-light rounded-pill" data-bs-dismiss="modal"><i class="ri-close-line label-icon align-middle fs-16 me-2"></i> Close</button>
+                            <button type="submit" id="edit-btn" class="btn btn-sm btn-success btn-label waves-effect waves-light rounded-pill"><i class="ri-check-double-line label-icon align-middle fs-16 me-2"></i> Add <?= $_view_title ?></button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -453,14 +607,14 @@
                 $("#product-field > option.phide").addClass('d-none');
             }
         });
-        $(document).on('change', '#srv_lan-field', function(){
+        $(document).on('change', '.srv_lan-field', function(){
             var cVal = parseInt($(this).val());
             if (cVal === 0) {
-                $("#srv_lan_no-field").parent().hide();
-                $("#srv_lan_no-field").val('');
+                $(".srv_lan_no-field").parent().hide();
+                $(".srv_lan_no-field").val('');
             } else {
-                $("#srv_lan_no-field").parent().show();
-                $("#srv_lan_no-field").val(0);
+                $(".srv_lan_no-field").parent().show();
+                $(".srv_lan_no-field").val(0);
             }
         });
         $(document).on('change', '#change_email-field', function(){
@@ -482,16 +636,12 @@
             scrollX: true,
             scrollCollapse: true,
             paging: true,
-            fixedColumns: {
-                left: 1,
-                right: 1
-            },
             fixedHeader: {
                 header: true,
                 // footer: true
             },
             order: [
-                [0, "desc"]
+                [0, "asc"]
             ],
             processing: true,
             serverSide: true,
@@ -500,10 +650,16 @@
                 type: "get", // method  , by default get
                 dataType: 'json',
             },
-            aoColumnDefs: [{
-                bSortable: false,
-                aTargets: [-1]
-            }]
+            aoColumnDefs: [
+                {
+                    bSortable: false,
+                    aTargets: [-1]
+                },
+                {
+                    className: 'dt-center',
+                    aTargets: [1, 4, 5, 6, 7]
+                }
+            ]
         });
         });
     </script>
