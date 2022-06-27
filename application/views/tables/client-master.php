@@ -347,11 +347,11 @@
                             </div>
                             <div class="col-md-2">
                                 <label for="purchase_date-field" class="form-label">Purchase Date:</label>
-                                <input type="text" name="purchase_date" id="purchase_date-field" class="form-control form-control-sm" placeholder="Enter Purchase Date" />
+                                <input type="text" name="purchase_date" id="purchase_date-field" class="form-control form-control-sm" placeholder="Enter Purchase Date" data-provider="flatpickr" data-date-format="d M, Y" data-maxDate="<?= date('d M,Y') ?>" />
                             </div>
                             <div class="col-md-2">
                                 <label for="renewal_date-field" class="form-label">Renewal Date:</label>
-                                <input type="text" name="renewal_date" id="renewal_date-field" class="form-control form-control-sm" placeholder="Enter Renewal Date" />
+                                <input type="text" name="renewal_date" id="renewal_date-field" class="form-control form-control-sm" placeholder="Enter Renewal Date" data-provider="flatpickr" data-date-format="d M, Y" />
                             </div>
                             <div class="col-md-3">
                                 <label for="srv_lan-field" class="form-label">Srv/Lan:</label>
@@ -539,11 +539,11 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="purchase_date-field" class="form-label">Purchase Date:</label>
-                                <input type="text" name="purchase_date" id="purchase_date-field" class="form-control form-control-sm" placeholder="Enter Purchase Date" />
+                                <input type="text" name="purchase_date" id="purchase_date-field" class="form-control form-control-sm" placeholder="Enter Purchase Date" data-provider="flatpickr" data-date-format="d M, Y" data-maxDate="<?= date('d M,Y') ?>" />
                             </div>
                             <div class="col-md-6">
                                 <label for="renewal_date-field" class="form-label">Renewal Date:</label>
-                                <input type="text" name="renewal_date" id="renewal_date-field" class="form-control form-control-sm" placeholder="Enter Renewal Date" />
+                                <input type="text" name="renewal_date" id="renewal_date-field" class="form-control form-control-sm" placeholder="Enter Renewal Date" data-provider="flatpickr" data-date-format="d M, Y" />
                             </div>
                             <div class="col-md-6">
                                 <label for="srv_lan-field" class="form-label">Srv/Lan:</label>
@@ -593,7 +593,7 @@
     <!-- include footer links -->
     <?php $this->load->view('layouts/template/footerLinks'); ?>
 
-    <script src="<?= base_url() ?>assets/js/pages/form-validation.init.js"></script>
+    <script src="<?= base_url() ?>assets/js/pages/form-validation.init.js"></script>    
 
     <script type="text/javascript">
 

@@ -573,8 +573,8 @@ class ClientMaster extends CI_Controller
             cd.lan_type as srv_lan,
             cd.total_lan as srv_lan_no,
             cd.referby,
-            pp.purchase_date,
-            pp.renewal_date
+            DATE_FORMAT(pp.purchase_date, '%d %b, %Y') as purchase_date,
+            DATE_FORMAT(pp.renewal_date, '%d %b, %Y') as renewal_date
             from si_clients_details cd
             left join si_product_purchase pp on (cd.si_clients_details_id = pp.si_clients_details_id)
             where cd.status IN ('A', 'D') AND cd.si_clients_details_id=$id";
